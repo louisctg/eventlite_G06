@@ -23,7 +23,7 @@ public class EventServiceImpl implements EventService {
 	private final static String DATA = "data/events.json";
 
 	@Autowired
-	private EventService eventService;
+	private EventRepository eventRepository;
 	
 	@Override
 	public long count() {
@@ -52,5 +52,10 @@ public class EventServiceImpl implements EventService {
 		}
 
 		return events;
+	}
+
+	@Override
+	public Event save(Event event) {
+		return eventRepository.save(event);	
 	}
 }
