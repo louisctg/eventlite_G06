@@ -27,14 +27,7 @@ public class VenueServiceImpl implements VenueService {
 
 	@Override
 	public long count() {
-		long count = 0;
-		Iterator<Venue> i = findAll().iterator();
-
-		for (; i.hasNext(); count++) {
-			i.next();
-		}
-
-		return count;
+		return venueRepository.count();
 	}
 
 	@Override
