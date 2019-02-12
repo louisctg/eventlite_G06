@@ -27,18 +27,12 @@ public class EventServiceImpl implements EventService {
 	
 	@Override
 	public long count() {
-		long count = 0;
-		Iterator<Event> i = findAll().iterator();
-
-		for (; i.hasNext(); count++) {
-			i.next();
-		}
-
-		return count;
+		return eventRepository.count();
 	}
 
 	@Override
 	public Iterable<Event> findAll() {
+		/*
 		ArrayList<Event> events = new ArrayList<Event>();
 
 		try {
@@ -50,8 +44,8 @@ public class EventServiceImpl implements EventService {
 			log.error("Exception while reading file '" + DATA + "': " + e);
 			// If we can't read the file, then the event list is empty...
 		}
-
-		return events;
+		*/
+		return eventRepository.findAll();
 	}
 
 	@Override
