@@ -1,5 +1,8 @@
 package uk.ac.man.cs.eventlite.config.data;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +11,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+
 import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
 import uk.ac.man.cs.eventlite.entities.Venue;
+import uk.ac.man.cs.eventlite.entities.Event;
 
 @Component
 @Profile({ "default", "test" })
@@ -34,10 +39,25 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 
 		Venue venue1 = new Venue(1, "Royal Albert Hall", 5544);
 		Venue venue2 = new Venue(2, "Manchester Academy", 1000);
-		
+
 		// Build and save initial models here.
 		venueService.save(venue1);
 		venueService.save(venue2);
+		
+		Event newEvent = new Event();
+
+		// Build and save initial models here.
+		// Populate the event instance.
+		Calendar cal = Calendar.getInstance();
+		Date newDate = cal.getTime();
+		Date newTime = cal.getTime();
+
+		newEvent.setName("Testing");
+		newEvent.setDate(newDate);
+		newEvent.setTime(newTime);
+		newEvent.setVenue(1);
+
+		eventService.save(newEvent);
 
 	}
 }
