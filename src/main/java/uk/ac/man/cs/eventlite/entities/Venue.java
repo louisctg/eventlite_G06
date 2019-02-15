@@ -24,6 +24,12 @@ public class Venue {
 		name = requiredName;
 		capacity = requiredCapacity;
 	}
+	
+	public Venue(int requiredId, String requiredName, int requiredCapacity) {
+		id = requiredId;
+		name = requiredName;
+		capacity = requiredCapacity;
+	}
 
 	public long getId() {
 		return id;
