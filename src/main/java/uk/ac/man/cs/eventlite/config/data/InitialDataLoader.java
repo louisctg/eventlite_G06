@@ -1,6 +1,8 @@
 package uk.ac.man.cs.eventlite.config.data;
 
 import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -33,12 +35,25 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-
+		
+		Event newEvent = new Event();
+		
 		if (eventService.count() > 0) {
 			log.info("Database already populated. Skipping data initialization.");
 			return;
 		}
 		// Build and save initial models here.
-
+		// Populate the event instance.
+		Calendar cal = Calendar.getInstance();
+		Date newDate = cal.getTime();
+		Date newTime = cal.getTime();
+		
+		newEvent.setName("Testing");
+		newEvent.setDate(newDate);
+		newEvent.setTime(newTime);
+		newEvent.setVenue(1);
+		
+		eventService.save(newEvent);
+		
 	}
 }
