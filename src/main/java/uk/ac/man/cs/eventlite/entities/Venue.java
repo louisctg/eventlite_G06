@@ -19,6 +19,11 @@ public class Venue {
 
 	public Venue() {
 	}
+	
+	public Venue(String requiredName, int requiredCapacity) {
+		name = requiredName;
+		capacity = requiredCapacity;
+	}
 
 	public long getId() {
 		return id;
