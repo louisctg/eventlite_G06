@@ -37,8 +37,8 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 			return;
 		}
 
-		Venue venue1 = new Venue(1, "Royal Albert Hall", 5544);
-		Venue venue2 = new Venue(2, "Manchester Academy", 1000);
+		Venue venue1 = new Venue("Royal Albert Hall", 5544);
+		Venue venue2 = new Venue("Manchester Academy", 1000);
 
 		// Build and save initial models here.
 		venueService.save(venue1);
