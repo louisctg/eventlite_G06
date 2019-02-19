@@ -26,8 +26,8 @@ public class Event {
 	private Date time;
 
 	private String name;
-
-	private long venue;
+	@ManyToOne(targetEntity = Venue.class)
+	private Venue venue;
 
 	public Event() {
 	}
@@ -64,11 +64,11 @@ public class Event {
 		this.name = name;
 	}
 
-	public long getVenue() {
+	public Venue getVenue() {
 		return venue;
 	}
 
-	public void setVenue(long venue) {
+	public void setVenue(Venue venue) {
 		this.venue = venue;
 	}
 }

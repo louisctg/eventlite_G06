@@ -55,7 +55,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		newEvent.setName("Testing");
 		newEvent.setDate(newDate);
 		newEvent.setTime(newTime);
-		newEvent.setVenue(1);
+		newEvent.setVenue(venue1);
 
 		eventService.save(newEvent);
 
