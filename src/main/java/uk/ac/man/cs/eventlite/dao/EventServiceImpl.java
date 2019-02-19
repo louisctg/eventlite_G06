@@ -45,7 +45,7 @@ public class EventServiceImpl implements EventService {
 			// If we can't read the file, then the event list is empty...
 		}
 		*/
-		return eventRepository.findAll();
+		return eventRepository.findAllByOrderByDateAscTimeAsc();
 	}
 
 	@Override
