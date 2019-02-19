@@ -16,15 +16,11 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 public class Security extends WebSecurityConfigurerAdapter {
 
 	public static final String ADMIN_ROLE = "ADMINISTRATOR";
-	public static final String USER = "USER";
 
 	// List the mappings/methods for which no authorisation is required.
 	// By default we allow all GETs and full access to the H2 console.
 	private static final RequestMatcher[] NO_AUTH = { new AntPathRequestMatcher("/**", "GET"),
 			new AntPathRequestMatcher("/h2-console/**") };
-
-	//
-	//
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -63,7 +59,5 @@ public class Security extends WebSecurityConfigurerAdapter {
 		auth.inMemoryAuthentication().withUser("Rob").password("Haines").roles(ADMIN_ROLE);
 		auth.inMemoryAuthentication().withUser("Caroline").password("Jay").roles(ADMIN_ROLE);
 		auth.inMemoryAuthentication().withUser("Markel").password("Vigo").roles(ADMIN_ROLE);
-		auth.inMemoryAuthentication().withUser("Marcel").password("marcel").roles(USER);
-		auth.inMemoryAuthentication().withUser("Melvin").password("melvin").roles(USER);
 	}
 }
