@@ -1,5 +1,7 @@
 package uk.ac.man.cs.eventlite.config;
 
+import javax.management.relation.Role;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -14,8 +16,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 public class Security extends WebSecurityConfigurerAdapter {
 
 	public static final String ADMIN_ROLE = "ADMINISTRATOR";
-	public static final String EVENT_ATTENDEE = "EVENT_ATTENDEE";
-	public static final String EVENT_ORGANISER = "EVENT_ORGANISER";
+	public static final String USER = "USER";
 
 	// List the mappings/methods for which no authorisation is required.
 	// By default we allow all GETs and full access to the H2 console.
@@ -62,7 +63,7 @@ public class Security extends WebSecurityConfigurerAdapter {
 		auth.inMemoryAuthentication().withUser("Rob").password("Haines").roles(ADMIN_ROLE);
 		auth.inMemoryAuthentication().withUser("Caroline").password("Jay").roles(ADMIN_ROLE);
 		auth.inMemoryAuthentication().withUser("Markel").password("Vigo").roles(ADMIN_ROLE);
-		auth.inMemoryAuthentication().withUser("Marcel").password("marcel").roles(EVENT_ATTENDEE);
-		auth.inMemoryAuthentication().withUser("Melvin").password("melvin").roles(EVENT_ORGANISER);
+		auth.inMemoryAuthentication().withUser("Marcel").password("marcel").roles(USER);
+		auth.inMemoryAuthentication().withUser("Melvin").password("melvin").roles(USER);
 	}
 }
