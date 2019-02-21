@@ -3,6 +3,10 @@ package uk.ac.man.cs.eventlite.entities;
 import java.util.Date;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -24,7 +28,9 @@ public class Event {
 	@DateTimeFormat(pattern = "HH:mm")
 	@Temporal(TemporalType.TIME)
 	private Date time;
-
+	
+	@NotEmpty(message = "The event cannot be empty.")
+	@Size(max = 30, message = "The event must have 30 characters or less.")
 	private String name;
 	@ManyToOne(targetEntity = Venue.class)
 	private Venue venue;
