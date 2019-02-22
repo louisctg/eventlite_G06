@@ -3,6 +3,9 @@ package uk.ac.man.cs.eventlite.entities;
 import java.util.Date;
 
 import javax.persistence.*;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -18,12 +21,15 @@ public class Event {
 	@Id
 	@GeneratedValue
 	private long id;
-
+	
+	@NotNull(message = "Please enter a date")
+	@Future(message = "Only the future is valid")
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
 	private Date date;
 
+	@NotNull(message = "Please enter a date")
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@DateTimeFormat(pattern = "HH:mm")
 	@Temporal(TemporalType.TIME)
@@ -33,6 +39,7 @@ public class Event {
 	@Size(max = 30, message = "The event must have 30 characters or less.")
 	private String name;
 	@ManyToOne(targetEntity = Venue.class)
+	@NotNull(message = "Please select one")
 	private Venue venue;
 
 	public Event() {
