@@ -36,7 +36,7 @@ public class EventsController {
 	}
 	
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
-	public String newGreeting(Model model) {
+	public String newEvent(Model model) {
 		if (!model.containsAttribute("event")) {
 			model.addAttribute("event", new Event());
 			//we need to add the venues so we can extract them 
@@ -48,11 +48,15 @@ public class EventsController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public String createGreeting(@RequestBody @Valid @ModelAttribute Event event ,
+	public String createEvent(@RequestBody @Valid @ModelAttribute Event event ,
 			BindingResult errors, Model model, RedirectAttributes redirectAttrs) {
 
 		if (errors.hasErrors()) {
 			model.addAttribute("event", event);
+			//when we failed to supply a correct  value for the fields in the html new 
+			//the webpage will create an error and we send the same, with the same creation of event
+			//and at the same time we will need to re-send the venues 
+			//maybe we can send the same attribute send as we did with event but I am not sure if that will work
 			model.addAttribute("venues", venueService.findAll());
 			return "events/new";
 		}

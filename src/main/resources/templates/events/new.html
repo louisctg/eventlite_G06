@@ -7,7 +7,7 @@
 <body>
   <div layout:fragment="content">
     <h1>Add a new Event</h1>
-    
+    <!--The following is code that will implement required fields that will help to create an event object in the system -->
     <form action="#" th:action="@{/events}" th:object="${event}" method="post">
       <div class="form-group" th:classappend="${#fields.hasErrors('name')}? has-error">
         <label for="name">EventName</label>
@@ -25,6 +25,8 @@
         <p class="text-danger" th:if="${#fields.hasErrors('time')}" th:errors="*{time}">errors</p>
       </div>
       <div class="form-group" th:classappend="${#fields.hasErrors('venue')}? has-error">
+      <!--For venues we need to recollect all the veneues in an attribute from the controller and then iterate through this attribute 
+      	  and displaying in option function -->
         <label for="venue">Venue</label>
         <select th:field = "*{venue}" class = "form-control" id="venue">
         <option value="0"> select Venue</option>

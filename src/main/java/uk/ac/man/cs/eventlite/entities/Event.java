@@ -22,13 +22,14 @@ public class Event {
 	@GeneratedValue
 	private long id;
 	
+	//it is necessary to avoid date to be a null reference
 	@NotNull(message = "Please enter a date")
 	@Future(message = "Only the future is valid")
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
 	private Date date;
-
+	//it is necessary to avoid time to be a null reference
 	@NotNull(message = "Please enter a date")
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@DateTimeFormat(pattern = "HH:mm")
