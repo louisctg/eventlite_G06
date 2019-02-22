@@ -3,6 +3,7 @@ package uk.ac.man.cs.eventlite.entities;
 import java.util.Date;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
@@ -30,6 +31,7 @@ public class Event {
 	@Temporal(TemporalType.DATE)
 	private Date date;
 	//it is necessary to avoid time to be a null reference
+	@Valid
 	@NotNull(message = "Please enter a date")
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@DateTimeFormat(pattern = "HH:mm")
