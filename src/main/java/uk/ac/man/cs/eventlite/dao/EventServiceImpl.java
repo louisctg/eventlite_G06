@@ -52,4 +52,9 @@ public class EventServiceImpl implements EventService {
 	public Event save(Event event) {
 		return eventRepository.save(event);	
 	}
+	
+	@Override
+	public void delete(long id) {
+		eventRepository.delete(id);
+	}
 }
