@@ -1,15 +1,22 @@
 package uk.ac.man.cs.eventlite.controllers;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
+import uk.ac.man.cs.eventlite.entities.Event;
 
 @Controller
 @RequestMapping(value = "/events", produces = { MediaType.TEXT_HTML_VALUE })
@@ -40,6 +47,18 @@ public class EventsController {
 		return "events/update";
 	}
 	
-	
-
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public String updateEvent(@RequestBody @Valid @ModelAttribute Event event, @PathVariable long id, BindingResult errors, Model model, RedirectAttributes redirAttrs)
+	{
+		if(errors.hasErrors()) {
+			model.addAttribute("event", event);
+			return "events/update";
+		}
+		
+		event.setId(id);
+		eventService.save(event);
+		redirAttrs.addFlashAttribute("ok_message", "Event updated.");
+				
+		return "redirect:/events";
+	}
 }
