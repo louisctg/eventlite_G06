@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -27,5 +28,18 @@ public class EventsController {
 
 		return "events/index";
 	}
+	
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public String getEventToUpdate(Model model, @PathVariable long id)
+	{
+		if(!model.containsAttribute("event")) {
+			model.addAttribute("event", eventService.findOne(id));
+			model.addAttribute("venues", venueService.findAll());
+		}
+		
+		return "events/update";
+	}
+	
+	
 
 }

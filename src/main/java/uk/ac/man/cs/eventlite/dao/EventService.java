@@ -10,4 +10,5 @@ public interface EventService {
 	
 	public Event save(Event event);
 	
+	public Event findOne(long id);
 }
