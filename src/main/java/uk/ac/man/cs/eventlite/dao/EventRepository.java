@@ -13,5 +13,4 @@ public interface EventRepository extends CrudRepository<Event, Long>{
 	 */
 	Iterable<Event> findAllByOrderByDateAscTimeAsc();
 	
-	
 }
