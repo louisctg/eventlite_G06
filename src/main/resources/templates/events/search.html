@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/default}">
+<head>
+  <title>New</title>
+</head>
+<body>
+  <div layout:fragment="content">
+    <h1>Input Keyword</h1>
+    
+    <form action="#" th:action="@{/events/result}" th:object="${event}" method="get">
+      <div class="form-group" >
+        <label for="template">Greeting text</label>
+        <input class="form-control" type="text" name="key" placeholder="Blablabla..." autofocus="autofocus" />
+        <button class="btn btn-primary" type="submit"><i class="fa fa-bookmark-o" aria-hidden="true"></i> Search</button>
+      </div>
+      
+      <a class="btn btn-warning" role="button" href="/events"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</a>
+    </form>
+  </div>
+</body>
+</html>
