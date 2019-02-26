@@ -47,7 +47,7 @@ public class EventsController {
 		
 		List<Event> res = new ArrayList<>();
 		for(Event e : eventService.findAll()){
-			if (e.getName().contains(key)){
+			if (e.getName().toLowerCase().contains(key.toLowerCase())){
 				res.add(e);
 			}
 		}
