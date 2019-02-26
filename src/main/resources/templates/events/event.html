@@ -23,7 +23,9 @@
           <td th:text="${{event.venue.name}}">Event venue</td>
           <td th:text="${{event.date}}">Event date</td>
           <td th:text="${{event.time}}">Event time</td>
-          <td><a th:href="@{/events/delete/{id}(id=${event.id})}" th:text="Delete">Delete Event</a></td>
+          <td>
+          	<a type="submit" class="btn btn-danger" th:href="${'/events/delete/'+{event.id}}"><i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Delete</a>
+          </td>
         </tr>
       </tbody>
     </table>
