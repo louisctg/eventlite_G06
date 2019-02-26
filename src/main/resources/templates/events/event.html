@@ -14,6 +14,7 @@
           <th><i class="fa fa-map-marker"></i> Venue</th>
           <th><i class="fa fa-calendar"></i> Date</th>
           <th><i class="fa fa-clock-o"></i> Time</th>
+          <th><i class="fa fa-close"></i> Delete</th>
         </tr>
       </thead>
       <tbody>
@@ -22,6 +23,7 @@
           <td th:text="${{event.venue.name}}">Event venue</td>
           <td th:text="${{event.date}}">Event date</td>
           <td th:text="${{event.time}}">Event time</td>
+          <td><a th:href="@{/events/delete/{id}(id=${event.id})}" th:text="Delete">Delete Event</a></td>
         </tr>
       </tbody>
     </table>

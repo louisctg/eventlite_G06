@@ -31,14 +31,6 @@ public class EventsController {
 		return "events/index";
 	}
 	
-	@RequestMapping(value = "delete/{id}", method = RequestMethod.GET)
-	public String delete(@PathVariable("id") long id)
-	{
-		eventService.delete(id);
-		
-		return "redirect:/events";
-	}
-	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public String getEvent(@PathVariable("id") long id,
 			@RequestParam(value = "name", required = false, defaultValue = "Testing") String name, Model model) {
@@ -49,5 +41,11 @@ public class EventsController {
 		return "events/event";
 	}
 	
-
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+	public String delete(@PathVariable("id") long id)
+	{
+		eventService.delete(id);
+		
+		return "redirect:/events";
+	}
 }
