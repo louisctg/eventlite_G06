@@ -3,6 +3,7 @@ package uk.ac.man.cs.eventlite.dao;
 import java.util.Iterator;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -46,6 +47,12 @@ public class EventServiceImpl implements EventService {
 		}
 		*/
 		return eventRepository.findAllByOrderByDateAscTimeAsc();
+	}
+	
+	@Override
+	public Iterable<Event> findAllAfterToday() {
+		// give as argument the current time given by default Date constructor
+		return eventRepository.findByDateAfterOrderByDateAscTimeAsc(new Date());
 	}
 
 	@Override
