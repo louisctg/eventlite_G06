@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
@@ -36,6 +37,15 @@ public class EventsController {
 		return "events/index";
 	}
 	
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public String getEvent(@PathVariable("id") long id,
+			@RequestParam(value = "name", required = false, defaultValue = "Testing") String name, Model model) {
+
+		Event event = eventService.findOne(id);
+		model.addAttribute("event", event);
+
+		return "events/event";
+	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String newEvent(Model model) {
@@ -71,7 +81,7 @@ public class EventsController {
 		return "redirect:/events";
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
 	public String getEventToUpdate(Model model, @PathVariable long id)
 	{
 		if(!model.containsAttribute("event")) {
@@ -94,6 +104,14 @@ public class EventsController {
 		eventService.save(event);
 		redirAttrs.addFlashAttribute("ok_message", "Event updated.");
 				
+		return "redirect:/events";
+	}
+	
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+	public String delete(@PathVariable("id") long id)
+	{
+		eventService.delete(id);
+		
 		return "redirect:/events";
 	}
 }
