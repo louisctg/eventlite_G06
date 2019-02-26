@@ -14,12 +14,17 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 public class Security extends WebSecurityConfigurerAdapter {
 
 	public static final String ADMIN_ROLE = "ADMINISTRATOR";
+	public static final String EVENT_ATTENDEE = "EVENT_ATTENDEE";
+	public static final String EVENT_ORGANISER = "EVENT_ORGANISER";
 
 	// List the mappings/methods for which no authorisation is required.
 	// By default we allow all GETs and full access to the H2 console.
 	private static final RequestMatcher[] NO_AUTH = { new AntPathRequestMatcher("/**", "GET"),
 			new AntPathRequestMatcher("/h2-console/**") };
 
+	//
+	//
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		// By default, all requests are authenticated except our specific list.
@@ -29,6 +34,18 @@ public class Security extends WebSecurityConfigurerAdapter {
 		http.formLogin().loginPage("/sign-in").permitAll();
 		http.logout().logoutUrl("/sign-out").logoutSuccessUrl("/").permitAll();
 
+		// insert authorize requests here
+		
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		
+		// up to here
+		
 		// Use HTTP basic for the API.
 		http.requestMatcher(new AntPathRequestMatcher("/api/**")).httpBasic();
 
@@ -45,5 +62,7 @@ public class Security extends WebSecurityConfigurerAdapter {
 		auth.inMemoryAuthentication().withUser("Rob").password("Haines").roles(ADMIN_ROLE);
 		auth.inMemoryAuthentication().withUser("Caroline").password("Jay").roles(ADMIN_ROLE);
 		auth.inMemoryAuthentication().withUser("Markel").password("Vigo").roles(ADMIN_ROLE);
+		auth.inMemoryAuthentication().withUser("Marcel").password("marcel").roles(EVENT_ATTENDEE);
+		auth.inMemoryAuthentication().withUser("Melvin").password("melvin").roles(EVENT_ORGANISER);
 	}
 }

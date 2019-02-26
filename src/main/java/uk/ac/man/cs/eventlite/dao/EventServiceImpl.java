@@ -20,8 +20,6 @@ public class EventServiceImpl implements EventService {
 
 	private final static Logger log = LoggerFactory.getLogger(EventServiceImpl.class);
 
-	private final static String DATA = "data/events.json";
-
 	@Autowired
 	private EventRepository eventRepository;
 	
@@ -46,6 +44,11 @@ public class EventServiceImpl implements EventService {
 		}
 		*/
 		return eventRepository.findAllByOrderByDateAscTimeAsc();
+	}
+	
+	@Override
+	public Event findOne(long id) {
+		return eventRepository.findOne(id);
 	}
 
 	@Override
