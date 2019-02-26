@@ -1,6 +1,8 @@
 package uk.ac.man.cs.eventlite.controllers;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -40,11 +42,15 @@ public class EventsController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public String getEvent(@PathVariable("id") long id,
 			@RequestParam(value = "name", required = false, defaultValue = "Testing") String name, Model model) {
-
 		Event event = eventService.findOne(id);
 		model.addAttribute("event", event);
-
+	
 		return "events/event";
+	}
+
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public String linkToSearch() {
+		return "events/search";
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -114,4 +120,21 @@ public class EventsController {
 		
 		return "redirect:/events";
 	}
+
+	
+	@RequestMapping(value = "/result", method = RequestMethod.GET)
+	public String searchByKey(@RequestParam(value = "key")String key, Model model) {
+		
+		List<Event> res = new ArrayList<>();
+		for(Event e : eventService.findAll()){
+			if (e.getName().toLowerCase().contains(key.toLowerCase())){
+				res.add(e);
+			}
+		}
+
+		model.addAttribute("events", res);
+		
+		return "events/result";
+	}
+	
 }
