@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <head>
   <title>All events</title>
 </head>
@@ -16,8 +17,10 @@
           <th><i class="fa fa-map-marker"></i> Venue</th>
           <th><i class="fa fa-calendar"></i> Date</th>
           <th><i class="fa fa-clock-o"></i> Time</th>
-          <th><i class="glyphicon glyphicon-pencil"></i> Edit </th>
-          <th><i class="fa fa-close"></i> Delete</th>
+          <div sec:authorize="hasRole('EVENT_ORG')">
+              <th><i class="glyphicon glyphicon-pencil"></i> Edit </th>
+              <th><i class="fa fa-close"></i> Delete</th>
+          </div>
         </tr>
       </thead>
       <tbody>
@@ -26,12 +29,14 @@
           <td th:text="${{e.venue.name}}">Event venue</td>
           <td th:text="${{e.date}}">Event date</td>
           <td th:text="${{e.time}}">Event time</td>
+          <div sec:authorize="hasRole('EVENT_ORG')">
           <td>
           	<a type="submit" class="btn btn-info" th:href="${'/events/update/'+{e.id}}"><i class="glyphicon glyphicon-pencil" aria-hidden="true"></i> Edit</a>
           </td>
           <td>
           	<a type="submit" class="btn btn-danger" th:href="${'/events/delete/'+{e.id}}"><i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Delete</a>
           </td>
+          </div>
         </tr>
       </tbody>
     </table>
