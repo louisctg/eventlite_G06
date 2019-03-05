@@ -72,7 +72,7 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public Iterable<Event> findFutureEventsOrderedByNameAndDate() {
-		Iterable<Event> eventsAfterToday =   eventRepository.findByDateAfterOrderByNameAscDateDescTimeDesc(new Date());
+		Iterable<Event> eventsAfterToday =   eventRepository.findByDateAfterOrderByDateAscTimeAscNameAsc(new Date());
 		Iterable<Event> eventsToday =   eventRepository.findByDateEqualsAndTimeGreaterThanEqualOrderByDateAscTimeAscNameAsc(new Date(), new Date());
 		
 		List<Event> futureEvents = new ArrayList<Event>();
@@ -88,7 +88,7 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public Iterable<Event> findPastEventsOrderedByNameAndDate() {
-		Iterable<Event> eventsBeforeToday =   eventRepository.findByDateBeforeOrderByNameAscDateAscTimeAsc(new Date());
+		Iterable<Event> eventsBeforeToday =   eventRepository.findByDateBeforeOrderByDateDescTimeDescNameAsc(new Date());
 		Iterable<Event> eventsToday =   eventRepository.findByDateEqualsAndTimeLessThanOrderByDateDescTimeDescNameAsc(new Date(), new Date());
 		
 		List<Event> pastEvents = new ArrayList<Event>();
