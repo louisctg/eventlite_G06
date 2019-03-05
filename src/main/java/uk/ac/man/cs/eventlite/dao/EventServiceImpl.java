@@ -69,4 +69,40 @@ public class EventServiceImpl implements EventService {
 	public void delete(long id) {
 		eventRepository.delete(id);
 	}
+
+	@Override
+	public Iterable<Event> searchFutureEventsOrderedByNameAndDateAscending(String name) {
+		Iterable<Event> eventsAfterToday =  eventRepository.findByNameContainingIgnoreCaseAndDateAfterOrderByDateAscTimeAscNameAsc(name, new Date());
+		Iterable<Event> todayEvents = eventRepository.findByNameContainingIgnoreCaseAndDateEqualsAndTimeGreaterThanEqualOrderByDateAscTimeAscNameAsc(name, new Date(), new Date());
+		
+		List<Event> futureEvents = new ArrayList<Event>();
+		
+		for(Event event: todayEvents) {
+			futureEvents.add(event);
+		}
+		
+		for(Event event: eventsAfterToday) {
+			futureEvents.add(event);
+		}
+		
+		return futureEvents;
+	}
+
+	@Override
+	public Iterable<Event> searchPastEventsOrderedByNameAndDateDescending(String name) {
+		Iterable<Event> eventsBeforeToday =  eventRepository.findByNameContainingIgnoreCaseAndDateBeforeOrderByDateDescTimeDescNameAsc(name, new Date());
+		Iterable<Event> todayEvents = eventRepository.findByNameContainingIgnoreCaseAndDateEqualsAndTimeLessThanOrderByDateDescTimeDescNameAsc(name, new Date(), new Date());
+		
+		List<Event> pastEvents = new ArrayList<Event>();
+		
+		for(Event event: todayEvents) {
+			pastEvents.add(event);
+		}
+		
+		for(Event event: eventsBeforeToday) {
+			pastEvents.add(event);
+		}
+		
+		return pastEvents;	
+	}
 }

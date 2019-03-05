@@ -32,39 +32,82 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 
-		Venue venue1 = new Venue("Royal Albert Hall", 5544);
-		Venue venue2 = new Venue("Manchester Academy", 1000);
-
-		// Build and save initial models here.
-		venueService.save(venue1);
-		venueService.save(venue2);
-		
-		Event newEvent1 = new Event();
-
-		// Build and save initial models here.
-		// Populate the event instance.
-		Calendar cal = Calendar.getInstance();
-		Date newDate = cal.getTime();
-		Date newTime = cal.getTime();
-
-		newEvent1.setName("Testing");
-		newEvent1.setDate(newDate);
-		newEvent1.setTime(newTime);
-		newEvent1.setVenue(venue1);
-
-		eventService.save(newEvent1);
-		
-		Event newEvent2 = new Event();
-		newEvent2.setName("Tested");
-		newEvent2.setDate(newDate);
-		newEvent2.setTime(newTime);
-		newEvent2.setVenue(venue2);
-
-		eventService.save(newEvent2);
-
 		if (eventService.count() > 0 && venueService.count() > 0) {
 			log.info("Database already populated. Skipping data initialization.");
 			return;
 		}
+
+		// Build and save initial models here.
+		Venue venue1 = new Venue("Royal Albert Hall", 5544);
+		Venue venue2 = new Venue("Manchester Academy", 1000);
+		Venue venueA = new Venue("Venue A", 15);
+		Venue venueB = new Venue("Venue B", 10);
+		
+		venueService.save(venue1);
+		venueService.save(venue2);
+		venueService.save(venueA);
+		venueService.save(venueB);
+		
+		Calendar cal = Calendar.getInstance();
+		
+		Event alpha = new Event();
+		alpha.setName("Event Alpha");
+		cal.add(Calendar.HOUR_OF_DAY, 4);
+		alpha.setDate(cal.getTime());
+		alpha.setTime(cal.getTime());
+		alpha.setVenue(venueB);
+		
+		eventService.save(alpha);
+		
+		Event beta = new Event();
+		beta.setName("Event Beta");
+		cal = Calendar.getInstance();
+		cal.add(Calendar.HOUR_OF_DAY, 2);
+		beta.setDate(cal.getTime());
+		beta.setTime(cal.getTime());
+		beta.setVenue(venueA);
+		
+		eventService.save(beta);
+		
+		Event apple = new Event();
+		apple.setName("Event Apple");
+		cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_YEAR, 1);
+		apple.setDate(cal.getTime());
+		apple.setTime(cal.getTime());
+		apple.setVenue(venueA);
+		
+		eventService.save(apple);
+		
+		Event former = new Event();
+		former.setName("Event Former");
+		cal = Calendar.getInstance();
+		cal.add(Calendar.HOUR_OF_DAY, -2);
+		former.setDate(cal.getTime());
+		former.setTime(cal.getTime());
+		former.setVenue(venueB);
+		
+		eventService.save(former);
+		
+		Event previous = new Event();
+		previous.setName("Event Previous");
+		cal = Calendar.getInstance();
+		cal.add(Calendar.HOUR_OF_DAY, -4);
+		previous.setDate(cal.getTime());
+		previous.setTime(cal.getTime());
+		previous.setVenue(venueA);
+		
+		eventService.save(previous);
+		
+		Event past = new Event();
+		past.setName("Event Past");
+		cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_YEAR, -1);
+		past.setDate(cal.getTime());
+		past.setTime(cal.getTime());
+		past.setVenue(venueA);
+		
+		eventService.save(past);
+
 	}
 }
