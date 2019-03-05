@@ -10,6 +10,7 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -32,18 +33,20 @@ public class Event {
 	private Date date;
 	//it is necessary to avoid time to be a null reference
 	@Valid
-	@NotNull(message = "Please enter a date")
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@DateTimeFormat(pattern = "HH:mm")
 	@Temporal(TemporalType.TIME)
 	private Date time;
 	
-	@NotEmpty(message = "The event cannot be empty.")
-	@Size(max = 30, message = "The event must have 30 characters or less.")
+	@NotBlank(message = "Please enter an actual name")
+	@Size(max = 256, message = "The event must have 256 characters or less.")
 	private String name;
 	@ManyToOne(targetEntity = Venue.class)
 	@NotNull(message = "Please select one")
 	private Venue venue;
+	
+	@Size(max = 500, message = "The event must have 500 characters or less.")
+	private String description;
 
 	public Event() {
 	}
@@ -86,5 +89,13 @@ public class Event {
 
 	public void setVenue(Venue venue) {
 		this.venue = venue;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }
