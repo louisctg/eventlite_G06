@@ -128,15 +128,9 @@ public class EventsController {
 	@RequestMapping(value = "/result", method = RequestMethod.GET)
 	public String searchByKey(@RequestParam(value = "key")String key, Model model) {
 		
-		List<Event> res = new ArrayList<>();
-		for(Event e : eventService.findAll()){
-			if (e.getName().toLowerCase().contains(key.toLowerCase())){
-				res.add(e);
-			}
-		}
+		model.addAttribute("future_events", eventService.searchFutureEventsOrderedByNameAndDateAscending(key));
+		model.addAttribute("past_events", eventService.searchPastEventsOrderedByNameAndDateDescending(key));
 
-		model.addAttribute("events", res);
-		
 		return "events/result";
 	}
 	
