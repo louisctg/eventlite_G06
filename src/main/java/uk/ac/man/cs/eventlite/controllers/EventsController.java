@@ -35,8 +35,9 @@ public class EventsController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String getAllEvents(Model model) {
 
-		model.addAttribute("events", eventService.findAll());
-
+		//model.addAttribute("events", eventService.findAll());
+		model.addAttribute("future_events", eventService.findFutureEventsOrderedByNameAndDate());
+		model.addAttribute("past_events", eventService.findPastEventsOrderedByNameAndDate());
 		return "events/index";
 	}
 	

@@ -77,7 +77,7 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public Iterable<Event> findPastEventsOrderedByNameAndDate() {
-		return eventRepository.findByDateAfterOrderByNameAscDateAscTimeAsc(new Date());
+		return eventRepository.findByDateBeforeOrderByNameAscDateAscTimeAsc(new Date());
 	}
 	
 	
