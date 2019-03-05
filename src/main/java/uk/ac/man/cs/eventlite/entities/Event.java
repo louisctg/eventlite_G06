@@ -26,7 +26,7 @@ public class Event {
 	
 	//it is necessary to avoid date to be a null reference
 	@NotNull(message = "Please enter a date")
-	@Future(message = "Only the future is valid")
+	//@Future(message = "Only the future is valid")
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)

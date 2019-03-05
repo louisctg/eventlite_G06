@@ -71,6 +71,38 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
+	public Iterable<Event> findFutureEventsOrderedByNameAndDate() {
+		Iterable<Event> eventsAfterToday =   eventRepository.findByDateAfterOrderByDateAscTimeAscNameAsc(new Date());
+		Iterable<Event> eventsToday =   eventRepository.findByDateEqualsAndTimeGreaterThanEqualOrderByDateAscTimeAscNameAsc(new Date(), new Date());
+		
+		List<Event> futureEvents = new ArrayList<Event>();
+		for(Event event: eventsToday) {
+			futureEvents.add(event);
+		}
+		for(Event event: eventsAfterToday) {
+			futureEvents.add(event);
+		}
+		
+		return futureEvents;
+	}
+
+	@Override
+	public Iterable<Event> findPastEventsOrderedByNameAndDate() {
+		Iterable<Event> eventsBeforeToday =   eventRepository.findByDateBeforeOrderByDateDescTimeDescNameAsc(new Date());
+		Iterable<Event> eventsToday =   eventRepository.findByDateEqualsAndTimeLessThanOrderByDateDescTimeDescNameAsc(new Date(), new Date());
+		
+		List<Event> pastEvents = new ArrayList<Event>();
+		for(Event event: eventsBeforeToday) {
+			pastEvents.add(event);
+		}
+		for(Event event: eventsToday) {
+			pastEvents.add(event);
+		}
+		
+		return pastEvents;
+	}
+	
+	@Override
 	public Iterable<Event> searchFutureEventsOrderedByNameAndDateAscending(String name) {
 		Iterable<Event> eventsAfterToday =  eventRepository.findByNameContainingIgnoreCaseAndDateAfterOrderByDateAscTimeAscNameAsc(name, new Date());
 		Iterable<Event> todayEvents = eventRepository.findByNameContainingIgnoreCaseAndDateEqualsAndTimeGreaterThanEqualOrderByDateAscTimeAscNameAsc(name, new Date(), new Date());

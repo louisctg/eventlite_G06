@@ -18,8 +18,11 @@ public interface EventService {
 
 	public Iterable<Event> findAllAfterToday();
 	
+	public Iterable<Event> findFutureEventsOrderedByNameAndDate();
+	
+	public Iterable<Event> findPastEventsOrderedByNameAndDate();
+
 	public Iterable<Event> searchFutureEventsOrderedByNameAndDateAscending(String name);
 	
 	public Iterable<Event> searchPastEventsOrderedByNameAndDateDescending(String name);
-
 }
