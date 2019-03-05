@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import uk.ac.man.cs.eventlite.dao.EventService;
+import uk.ac.man.cs.eventlite.dao.VenueRepository;
 import uk.ac.man.cs.eventlite.dao.VenueService;
 import uk.ac.man.cs.eventlite.entities.Event;
 
@@ -44,7 +45,7 @@ public class EventsController {
 			@RequestParam(value = "name", required = false, defaultValue = "Testing") String name, Model model) {
 		Event event = eventService.findOne(id);
 		model.addAttribute("event", event);
-	
+		System.out.println("another debug line");
 		return "events/event";
 	}
 
@@ -65,7 +66,7 @@ public class EventsController {
 		return "events/new";
 	}
 
-	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	@RequestMapping(method = RequestMethod.POST, value="/new", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public String createEvent(@RequestBody @Valid @ModelAttribute Event event ,
 			BindingResult errors, Model model, RedirectAttributes redirectAttrs) {
 
@@ -99,10 +100,12 @@ public class EventsController {
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public String updateEvent(@RequestBody @Valid @ModelAttribute Event event, @PathVariable long id, BindingResult errors, Model model, RedirectAttributes redirAttrs)
+	public String updateEvent(@RequestBody @Valid @ModelAttribute Event event, BindingResult errors,  @PathVariable long id, Model model, RedirectAttributes redirAttrs)
 	{
 		if(errors.hasErrors()) {
 			model.addAttribute("event", event);
+			model.addAttribute("venues", venueService.findAll());
+			
 			return "events/update";
 		}
 

@@ -8,7 +8,7 @@
   <div layout:fragment="content">
     <h1>Add a new Event</h1>
     <!--The following is code that will implement required fields that will help to create an event object in the system -->
-    <form action="#" th:action="@{/events}" th:object="${event}" method="post">
+    <form action="#" th:action="@{/events/new}" th:object="${event}" method="post">
       <div class="form-group" th:classappend="${#fields.hasErrors('name')}? has-error">
         <label for="name">Event Name</label>
         <input class="form-control" type="text" name="name" id="name" th:value="${event.name}" placeholder="Rihanna Concert" autofocus="autofocus" />
