@@ -25,4 +25,10 @@ public interface EventRepository extends CrudRepository<Event, Long>{
 	Iterable<Event> findByDateBeforeOrderByNameAscDateAscTimeAsc(Date date);
 	
 	Iterable<Event> findByDateEqualsAndTimeLessThanOrderByDateDescTimeDescNameAsc(Date date, Date time);
+
+	Iterable<Event> findByNameContainingIgnoreCaseAndDateAfterOrderByDateAscTimeAscNameAsc(String name, Date date);
+	Iterable<Event> findByNameContainingIgnoreCaseAndDateEqualsAndTimeGreaterThanEqualOrderByDateAscTimeAscNameAsc(String name, Date date, Date time);
+	
+	Iterable<Event> findByNameContainingIgnoreCaseAndDateBeforeOrderByDateDescTimeDescNameAsc(String name, Date date);
+	Iterable<Event> findByNameContainingIgnoreCaseAndDateEqualsAndTimeLessThanOrderByDateDescTimeDescNameAsc(String name, Date date, Date time);
 }

@@ -1,5 +1,7 @@
 package uk.ac.man.cs.eventlite.dao;
 
+import java.util.Date;
+
 import uk.ac.man.cs.eventlite.entities.Event;
 
 public interface EventService {
@@ -19,4 +21,8 @@ public interface EventService {
 	public Iterable<Event> findFutureEventsOrderedByNameAndDate();
 	
 	public Iterable<Event> findPastEventsOrderedByNameAndDate();
+
+	public Iterable<Event> searchFutureEventsOrderedByNameAndDateAscending(String name);
+	
+	public Iterable<Event> searchPastEventsOrderedByNameAndDateDescending(String name);
 }

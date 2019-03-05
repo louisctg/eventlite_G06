@@ -74,6 +74,7 @@ public class EventServiceImpl implements EventService {
 	public Iterable<Event> findFutureEventsOrderedByNameAndDate() {
 		Iterable<Event> eventsAfterToday =   eventRepository.findByDateAfterOrderByNameAscDateDescTimeDesc(new Date());
 		Iterable<Event> eventsToday =   eventRepository.findByDateEqualsAndTimeGreaterThanEqualOrderByDateAscTimeAscNameAsc(new Date(), new Date());
+		
 		List<Event> futureEvents = new ArrayList<Event>();
 		for(Event event: eventsToday) {
 			futureEvents.add(event);
@@ -82,7 +83,6 @@ public class EventServiceImpl implements EventService {
 			futureEvents.add(event);
 		}
 		
-		
 		return futureEvents;
 	}
 
@@ -90,6 +90,7 @@ public class EventServiceImpl implements EventService {
 	public Iterable<Event> findPastEventsOrderedByNameAndDate() {
 		Iterable<Event> eventsBeforeToday =   eventRepository.findByDateBeforeOrderByNameAscDateAscTimeAsc(new Date());
 		Iterable<Event> eventsToday =   eventRepository.findByDateEqualsAndTimeLessThanOrderByDateDescTimeDescNameAsc(new Date(), new Date());
+		
 		List<Event> pastEvents = new ArrayList<Event>();
 		for(Event event: eventsBeforeToday) {
 			pastEvents.add(event);
@@ -98,9 +99,42 @@ public class EventServiceImpl implements EventService {
 			pastEvents.add(event);
 		}
 		
-		
 		return pastEvents;
 	}
 	
-	
+	@Override
+	public Iterable<Event> searchFutureEventsOrderedByNameAndDateAscending(String name) {
+		Iterable<Event> eventsAfterToday =  eventRepository.findByNameContainingIgnoreCaseAndDateAfterOrderByDateAscTimeAscNameAsc(name, new Date());
+		Iterable<Event> todayEvents = eventRepository.findByNameContainingIgnoreCaseAndDateEqualsAndTimeGreaterThanEqualOrderByDateAscTimeAscNameAsc(name, new Date(), new Date());
+		
+		List<Event> futureEvents = new ArrayList<Event>();
+		
+		for(Event event: todayEvents) {
+			futureEvents.add(event);
+		}
+		
+		for(Event event: eventsAfterToday) {
+			futureEvents.add(event);
+		}
+		
+		return futureEvents;
+	}
+
+	@Override
+	public Iterable<Event> searchPastEventsOrderedByNameAndDateDescending(String name) {
+		Iterable<Event> eventsBeforeToday =  eventRepository.findByNameContainingIgnoreCaseAndDateBeforeOrderByDateDescTimeDescNameAsc(name, new Date());
+		Iterable<Event> todayEvents = eventRepository.findByNameContainingIgnoreCaseAndDateEqualsAndTimeLessThanOrderByDateDescTimeDescNameAsc(name, new Date(), new Date());
+		
+		List<Event> pastEvents = new ArrayList<Event>();
+		
+		for(Event event: todayEvents) {
+			pastEvents.add(event);
+		}
+		
+		for(Event event: eventsBeforeToday) {
+			pastEvents.add(event);
+		}
+		
+		return pastEvents;	
+	}
 }
