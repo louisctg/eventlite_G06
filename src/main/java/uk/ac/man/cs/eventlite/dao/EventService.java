@@ -1,5 +1,7 @@
 package uk.ac.man.cs.eventlite.dao;
 
+import java.util.Date;
+
 import uk.ac.man.cs.eventlite.entities.Event;
 
 public interface EventService {
@@ -15,4 +17,9 @@ public interface EventService {
 	public void delete(long id);
 
 	public Iterable<Event> findAllAfterToday();
+	
+	public Iterable<Event> searchFutureEventsOrderedByNameAndDateAscending(String name, Date date);
+	
+	public Iterable<Event> searchPastEventsOrderedByNameAndDateDescending(String name, Date date);
+
 }
