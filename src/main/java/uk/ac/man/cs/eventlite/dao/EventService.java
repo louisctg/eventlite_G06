@@ -15,4 +15,8 @@ public interface EventService {
 	public void delete(long id);
 
 	public Iterable<Event> findAllAfterToday();
+	
+	public Iterable<Event> findFutureEventsOrderedByNameAndDate();
+	
+	public Iterable<Event> findPastEventsOrderedByNameAndDate();
 }

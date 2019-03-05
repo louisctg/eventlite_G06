@@ -69,4 +69,16 @@ public class EventServiceImpl implements EventService {
 	public void delete(long id) {
 		eventRepository.delete(id);
 	}
+
+	@Override
+	public Iterable<Event> findFutureEventsOrderedByNameAndDate() {
+		return eventRepository.findByDateAfterOrderByNameAscDateDescTimeDesc(new Date());
+	}
+
+	@Override
+	public Iterable<Event> findPastEventsOrderedByNameAndDate() {
+		return eventRepository.findByDateAfterOrderByNameAscDateAscTimeAsc(new Date());
+	}
+	
+	
 }
