@@ -41,10 +41,14 @@ public class Event {
 	@NotEmpty(message = "The event cannot be empty.")
 	@Size(max = 30, message = "The event must have 30 characters or less.")
 	private String name;
+	
 	@ManyToOne(targetEntity = Venue.class)
 	@NotNull(message = "Please select one")
 	private Venue venue;
-
+	
+	@Size(max = 500, message = "The description must have 500 characters or less.")
+	private String description;
+	
 	public Event() {
 	}
 
@@ -86,5 +90,13 @@ public class Event {
 
 	public void setVenue(Venue venue) {
 		this.venue = venue;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }
