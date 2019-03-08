@@ -137,4 +137,9 @@ public class EventServiceImpl implements EventService {
 		
 		return pastEvents;	
 	}
+
+	@Override
+	public Iterable<Event> findNext3UpcomingEvents() {
+		return eventRepository.findTop3ByDateGreaterThanEqualOrderByDateAsc(new Date());
+	}
 }
