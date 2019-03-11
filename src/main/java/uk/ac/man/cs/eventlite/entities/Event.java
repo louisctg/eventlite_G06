@@ -41,6 +41,7 @@ public class Event {
 	@NotBlank(message = "Please enter an actual name")
 	@Size(max = 256, message = "The event must have 256 characters or less.")
 	private String name;
+	
 	@ManyToOne(targetEntity = Venue.class)
 	@NotNull(message = "Please select one")
 	private Venue venue;
@@ -94,7 +95,7 @@ public class Event {
 	public String getDescription() {
 		return description;
 	}
-
+	
 	public void setDescription(String description) {
 		this.description = description;
 	}
