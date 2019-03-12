@@ -40,31 +40,31 @@ public class VenueController {
 
 		return "venues/index";
 	}
-	
+
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
 	public String getVenueToUpdate(Model model, @PathVariable long id)
 	{
 		if(!model.containsAttribute("venue")) {
 			model.addAttribute("venue", venueService.findOne(id));
 		}
-		
+
 		return "venues/update";
 	}
-	
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public String updateEvent(@RequestBody @Valid @ModelAttribute Venue venue, BindingResult errors,  @PathVariable long id, Model model, RedirectAttributes redirAttrs)
+	public String updateVenue(@RequestBody @Valid @ModelAttribute Venue venue, BindingResult errors,  @PathVariable long id, Model model, RedirectAttributes redirAttrs)
 	{
 		if(errors.hasErrors()) {
 			model.addAttribute("venue", venue);
-			
+
 			return "venues/update";
 		}
 
 		venue.setId(id);
 		venueService.save(venue);
 		redirAttrs.addFlashAttribute("ok_message", "Venue updated.");
-				
+
 		return "redirect:/venues";
 	}
-	
+
 }
