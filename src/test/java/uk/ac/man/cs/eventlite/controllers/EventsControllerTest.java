@@ -84,4 +84,17 @@ public class EventsControllerTest {
 		verify(eventService).findAll();
 		verifyZeroInteractions(event);
 	}
+	
+	@Test
+	public void getIndexEvent() throws Exception {
+		
+		when(eventService.findOne(1)).thenReturn(event);
+
+		mvc.perform(get("/events/1").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
+		.andExpect(view().name("events/event")).andExpect(handler().methodName("getEvent"));
+
+		verify(eventService).findOne(1);
+		verifyZeroInteractions(event);
+	}
+	
 }
