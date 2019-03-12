@@ -7,9 +7,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 @Table(name = "Venue")
@@ -19,8 +22,18 @@ public class Venue {
 	@GeneratedValue
 	private long id;
 
+	@NotBlank(message = "Please enter a name")
+	@Size(max = 256, message = "The venue name must have 256 characters or less.")
 	private String name;
+	
+	@NotBlank(message = "Please enter an address")
+	@Size(max = 300, message = "The address must be 300 characters or less.")
+	private String address;
+	
+	@NotBlank(message = "Please enter a postcode")
+	private String postcode;
 
+	@Min(0)
 	private int capacity;
 	
 	@OneToMany(targetEntity = Event.class,cascade = CascadeType.ALL, orphanRemoval = true)
