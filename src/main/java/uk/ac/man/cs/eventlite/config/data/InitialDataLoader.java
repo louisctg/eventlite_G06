@@ -32,6 +32,11 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 
+		if (eventService.count() > 0 && venueService.count() > 0) {
+			log.info("Database already populated. Skipping data initialization.");
+			return;
+		}
+		
 		Venue venue1 = new Venue("Royal Albert Hall", 5544);
 		Venue venue2 = new Venue("Manchester Academy", 1000);
 
@@ -61,10 +66,5 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		newEvent2.setVenue(venue2);
 
 		eventService.save(newEvent2);
-
-		if (eventService.count() > 0 && venueService.count() > 0) {
-			log.info("Database already populated. Skipping data initialization.");
-			return;
-		}
 	}
 }
