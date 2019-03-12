@@ -23,21 +23,32 @@ public class Venue {
 
 	private int capacity;
 	
+	private String city;
+	
+	private String postcode;
+	
 	@OneToMany(targetEntity = Event.class,cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Event> events = new ArrayList<>();
 
 	public Venue() {
 	}
 	
-	public Venue(String requiredName, int requiredCapacity) {
+	public Venue(String requiredName, int requiredCapacity, String requiredCity, 
+			      String requiredPostcode) {
 		name = requiredName;
 		capacity = requiredCapacity;
+		city = requiredCity;
+		postcode = requiredPostcode;
 	}
 	
-	public Venue(int requiredId, String requiredName, int requiredCapacity) {
+	public Venue(int requiredId, String requiredName, int requiredCapacity, 
+			       String requiredCity, String requiredPostcode) 
+	{
 		id = requiredId;
 		name = requiredName;
 		capacity = requiredCapacity;
+		city = requiredCity;
+		postcode = requiredPostcode;
 	}
 
 	public long getId() {
@@ -62,5 +73,15 @@ public class Venue {
 
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
+	}
+	
+	public String getAddress() {
+		return city + ", " + postcode;
+	}
+	
+	public void setAddress(String city, String postcode)
+	{
+		this.city = city;
+		this.postcode = postcode;
 	}
 }
