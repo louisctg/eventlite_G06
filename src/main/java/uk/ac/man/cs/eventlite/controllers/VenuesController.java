@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import uk.ac.man.cs.eventlite.dao.VenueService;
@@ -58,5 +59,18 @@ public class VenuesController {
 		redirectAttrs.addFlashAttribute("ok_message", "New venue added.");
 
 		return "redirect:/venues";
+	}
+	
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public String linkToSearch() {
+		return "venues/search";
+	}
+	
+	@RequestMapping(value = "/result", method = RequestMethod.GET)
+	public String searchByKey(@RequestParam(value = "key")String key, Model model) {
+		
+		model.addAttribute("venues", venueService.searchVenuesOrderedByNameAscending(key));
+
+		return "venues/result";
 	}
 }

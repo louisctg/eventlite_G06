@@ -3,7 +3,6 @@ package uk.ac.man.cs.eventlite.dao;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,4 +71,7 @@ public class VenueServiceImpl implements VenueService {
 		return venueRepository.findOne(id);
 	}
 
+	public Iterable<Venue> searchVenuesOrderedByNameAscending(String name){
+		return venueRepository.findByNameContainingIgnoreCaseOrderByNameAsc(name);
+	}
 }
