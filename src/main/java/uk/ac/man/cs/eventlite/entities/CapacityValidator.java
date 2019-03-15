@@ -10,6 +10,7 @@ public class CapacityValidator implements ConstraintValidator<PositiveIntegerCon
  
     @Override
     public boolean isValid(Integer capacity, ConstraintValidatorContext cxt) {
+    	System.out.println(capacity != null && capacity>0);
         return capacity != null && capacity>0;
     }
 }

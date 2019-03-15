@@ -25,21 +25,32 @@ public class VenuesController {
 	@Autowired
 	private VenueService venueService;
 	
+	@RequestMapping(method = RequestMethod.GET)
+	public String getAllVenues(Model model) {
+
+		model.addAttribute("venues", venueService.findAll());
+
+		return "venues/index";
+	}
+	
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String newVenue(Model model) {
-		if (!model.containsAttribute("venue")) {
+		if (!model.containsAttribute("venues")) {
 			model.addAttribute("venue", new Venue());
 		}
 
 		return "venues/new";
 	}
+	
 
 	@RequestMapping(method = RequestMethod.POST, value="/new", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public String createVenue(@RequestBody @Valid @ModelAttribute Venue venue,
+	public String createVenue(@RequestBody @Valid @ModelAttribute(name="venue") Venue venue,
 			BindingResult errors, Model model, RedirectAttributes redirectAttrs) {
 
 		if (errors.hasErrors()) {
+			
 			model.addAttribute("venue", venue);
+//			model.addAttribute("venues",venueService.findAll());
 			return "venues/new";
 		}
 

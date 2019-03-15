@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 
@@ -20,6 +21,7 @@ public class Venue {
 	@GeneratedValue
 	private long id;
 
+	@NotBlank(message = "Please enter an actual name")
 	@Size(max = 255, message = "The venue name must have <256 characters.")
 	private String name;
 
@@ -27,6 +29,7 @@ public class Venue {
 	private Integer capacity;
 	
 	@PostCodeConstraint
+	@NotBlank(message = "Please enter an actual name")
 	private String postcode;
 	
 	@Size(max = 299, message = "Road name must have <300 characters.")
@@ -77,8 +80,8 @@ public class Venue {
 		this.name = name;
 	}
 
-	public int getCapacity() {
-		return capacity;
+	public Integer getCapacity() {
+		return this.capacity;
 	}
 
 	public void setCapacity(int capacity) {
@@ -89,9 +92,20 @@ public class Venue {
 		return city + ", " + postcode;
 	}
 	
-	public void setAddress(String city, String postcode)
+	public void setPostcode(String postcode) {
+		this.postcode = postcode;
+	}
+	
+	public String getPostcode() {
+		return this.postcode;
+	}
+	
+	public void setCity(String city)
 	{
 		this.city = city;
-		this.postcode = postcode;
+	}
+	
+	public String getCity() {
+		return this.city;
 	}
 }
