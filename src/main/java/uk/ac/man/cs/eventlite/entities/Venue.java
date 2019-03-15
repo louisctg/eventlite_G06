@@ -23,7 +23,7 @@ public class Venue {
 
 	private int capacity;
 	
-	@OneToMany(targetEntity = Event.class,cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(targetEntity = Event.class, mappedBy = "venue", cascade = CascadeType.MERGE, orphanRemoval = true)
 	private List<Event> events = new ArrayList<>();
 
 	public Venue() {
@@ -62,5 +62,17 @@ public class Venue {
 
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
+	}
+	
+	public List<Event> getEvents() {
+		return events;
+	}
+
+	public void setEvents(List<Event> events) {
+		this.events = events;
+	}
+	
+	public void addEvent(Event event) {
+		this.events.add(event);
 	}
 }

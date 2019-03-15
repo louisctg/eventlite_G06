@@ -90,6 +90,7 @@ public class Event {
 	}
 
 	public void setVenue(Venue venue) {
+		venue.addEvent(this);
 		this.venue = venue;
 	}
 	

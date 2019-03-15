@@ -137,4 +137,24 @@ public class EventServiceImpl implements EventService {
 		
 		return pastEvents;	
 	}
+
+	@Override
+	public Iterable<Event> findNext3UpcomingEvents() {
+		Iterable<Event> top3Today = eventRepository.findTop3ByDateEqualsAndTimeAfterOrderByDateAscNameAsc(new Date(), new Date());
+		Iterable<Event> top3AfterToday = eventRepository.findTop3ByDateAfterOrderByDateAscNameAsc(new Date());
+		
+		List<Event> incomingEvents = new ArrayList<Event>();
+		
+		for(Event event: top3Today) {
+			if(incomingEvents.size()  < 3)
+				incomingEvents.add(event);
+		}
+		
+		for(Event event: top3AfterToday) {
+			if(incomingEvents.size()  < 3)
+				incomingEvents.add(event);
+		}
+		
+		return incomingEvents;
+	}
 }

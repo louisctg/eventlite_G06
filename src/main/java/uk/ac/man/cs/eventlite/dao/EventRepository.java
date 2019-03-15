@@ -31,4 +31,9 @@ public interface EventRepository extends CrudRepository<Event, Long>{
 	
 	Iterable<Event> findByNameContainingIgnoreCaseAndDateBeforeOrderByDateDescTimeDescNameAsc(String name, Date date);
 	Iterable<Event> findByNameContainingIgnoreCaseAndDateEqualsAndTimeLessThanOrderByDateDescTimeDescNameAsc(String name, Date date, Date time);
+	
+	// used for next 3 incoming events
+	Iterable<Event> findTop3ByDateAfterOrderByDateAscNameAsc(Date date);
+	
+	Iterable<Event> findTop3ByDateEqualsAndTimeAfterOrderByDateAscNameAsc(Date date, Date time);
 }

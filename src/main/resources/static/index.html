@@ -13,6 +13,72 @@
     <h1>EventLite</h1>
 
     <p>This is EventLite. See the <a href="/events">list of events</a> for more information.</p>
+    
+    
+ <!--   
+	<ul th:id="${events != null}" style="list-style: none;>
+		<li th:each="e: ${events}" th:text="${e.name}"> 
+			<div class="card-group">
+  				<div class="card">
+    				<img class="card-img-top" src="https://intu-public.s3.amazonaws.com/leisure/trafford-centre/01-intu-trafford-centre-odeon.jpg" alt="Card image cap">
+    					<div class="card-body">
+      						<h5 class="" th:text="${{e.name}}"></h5>
+      						<h7 class="" th:text="${{e.date}}"></h1>
+      						<h7 class="" th:text="${{e.time}}"></h1>
+      						<p class="card-text" th:text="${{e.description}}></p>
+    					</div>
+    			<div class="card-footer">
+      			<small class="text-muted" th:text="${{e.venue.name}}>sssss</small>
+    			</div>
+  			</div>
+		</li> 
+				<li th:each="e: ${events}" th:text="${e.name}"> 
+			<div class="card-group">
+  				<div class="card">
+    				<img class="card-img-top" src="https://intu-public.s3.amazonaws.com/leisure/trafford-centre/01-intu-trafford-centre-odeon.jpg" alt="Card image cap">
+    					<div class="card-body">
+      						<h5 class="" th:text="${{e.name}}"></h5>
+      						<h7 class="" th:text="${{e.date}}"></h7>
+      						<h7 class="" th:text="${{e.time}}"></h7>
+      						<p class="card-text" th:text="${{e.description}}></p>
+    					</div>
+    			<div class="card-footer">
+      			<small class="text-muted" th:text="${{e.venue.name}}>sssss</small>
+    			</div>
+    			
+  			</div>
+		</li> 
+	<ul>
+ -->   
+ 	<ul th:id="${events != null}" style="list-style: none;>
+		<li th:each="e: ${events}" th:text="${e.name}"> 
+			<div class="card-group">
+  				<div class="card">
+    				<img class="card-img-top" src="https://intu-public.s3.amazonaws.com/leisure/trafford-centre/01-intu-trafford-centre-odeon.jpg" alt="Card image cap">
+    					<div class="card-body">
+      						<h5 class="">ss</h5>
+      						<h1 class="">ss</h1>
+      						<h1 class="">ss</h1>
+      						<p class="card-text">ss</p>
+    					</div>
+    			<div class="card-footer">
+      			<small class="text-muted">sssss</small>
+    			</div>
+    			  				<div class="card">
+    				<img class="card-img-top" src="https://intu-public.s3.amazonaws.com/leisure/trafford-centre/01-intu-trafford-centre-odeon.jpg" alt="Card image cap">
+    					<div class="card-body">
+      						<h5 class="">ss</h5>
+      						<h1 class="">ss</h1>
+      						<h1 class="">ss</h1>
+      						<p class="card-text">ss</p>
+    					</div>
+    			<div class="card-footer">
+      			<small class="text-muted">sssss</small>
+    			</div>
+  			</div>
+		</li> 
+	<ul>
+
   </div>
 
   <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>

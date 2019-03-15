@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EventLite Home</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/webjars/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"></head>
+
+<style>
+html { font-size: 100%; }
+</style>
+
+<body>
+  <div class="container">
+ 
+    <h1>EventLite</h1>
+
+	<h3> Next 3 events coming up... </h3>
+		<div class="row" th:if="${events != null}">
+		
+		<div class="card-group">
+			<div th:each="e: ${events}" class="col-sm">
+		  		<div class="card">
+		  		<a th:href="@{/events/{id}(id=${e.id})}">
+		 			<img class="card-img-top" src="https://intu-public.s3.amazonaws.com/leisure/trafford-centre/01-intu-trafford-centre-odeon.jpg" alt="Card image cap">
+		    			<div class="card-body">
+		      				<h5 class="" th:text="${{e.name}}"></h5>
+		      				<h7 class="" th:text="${{e.date}}"></h7>
+		      				<h7 class="" th:text="${{e.time}}"></h7>
+		      				<p class="card-text" th:text="${{e.description}}"></p>
+		    			</div>
+		    			<div class="card-footer">
+		      				<small class="text-muted" th:text="${{e.venue.name}}"></small>
+		      			</div>
+		      		</a>
+		  			</div>
+		  		</div>
+			</div>
+		</div>
+
+		<div>
+			<br>
+	    	<p>This is EventLite. See the <a href="/events">list of events</a> for more information.</p>
+		</div>
+
+
+	<h3> Most popular venues... </h3>
+
+		<div class="row" th:if="${venues != null}">
+		
+		<div class="card-group">
+			<div th:each="v: ${venues}" class="col-sm">
+		  		<div class="card">
+		 			<img class="card-img-top" src="https://intu-public.s3.amazonaws.com/leisure/trafford-centre/01-intu-trafford-centre-odeon.jpg" alt="Card image cap">
+		    			<div class="card-body">
+		      				<h5 class="" th:text="${{v.name}}"></h5>
+		    			</div>
+		    			<div class="card-footer">
+		    				<p class="text-muted"> Future and past events at this venue: </p>
+		    				<div align="left">
+							<ul th:if="${v.events != null}" class="text-muted">
+								<li th:each="e: ${v.events}" th:text="${e.name}+ ' - ' + ${e.date} + ' ' + ${e.time}" ></li>
+							</ul>
+							</div>
+		      				
+		      			</div>
+		  			</div>
+		  		</div>
+			</div>
+		</div>		
+	
+		<div>
+			<br>
+	    	<p>See the <a href="/venues">list of venues</a> for more venues.</p>
+		</div>
+		
+  </div>
+
+  <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
