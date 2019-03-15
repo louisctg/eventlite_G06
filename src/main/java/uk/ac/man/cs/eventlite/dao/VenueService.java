@@ -8,5 +8,7 @@ public interface VenueService {
 
 	public Iterable<Venue> findAll();
 	
+	public Venue findOne(long id);
+	
 	public void save(Venue venue);
 }
