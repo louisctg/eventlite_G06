@@ -23,6 +23,7 @@ html { font-size: 100%; }
 		<div class="card-group">
 			<div th:each="e: ${events}" class="col-sm">
 		  		<div class="card">
+		  		<a th:href="@{/events/{id}(id=${e.id})}">
 		 			<img class="card-img-top" src="https://intu-public.s3.amazonaws.com/leisure/trafford-centre/01-intu-trafford-centre-odeon.jpg" alt="Card image cap">
 		    			<div class="card-body">
 		      				<h5 class="" th:text="${{e.name}}"></h5>
@@ -33,6 +34,7 @@ html { font-size: 100%; }
 		    			<div class="card-footer">
 		      				<small class="text-muted" th:text="${{e.venue.name}}"></small>
 		      			</div>
+		      		</a>
 		  			</div>
 		  		</div>
 			</div>
