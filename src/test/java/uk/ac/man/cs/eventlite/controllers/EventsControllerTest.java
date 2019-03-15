@@ -65,23 +65,28 @@ public class EventsControllerTest {
 
 	@Test
 	public void getIndexWhenNoEvents() throws Exception {
-		when(eventService.findAll()).thenReturn(Collections.<Event> emptyList());
+		when(eventService.findFutureEventsOrderedByNameAndDate()).thenReturn(Collections.<Event> emptyList());
+		when(eventService.findPastEventsOrderedByNameAndDate()).thenReturn(Collections.<Event> emptyList());
+
 
 		mvc.perform(get("/events").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
 				.andExpect(view().name("events/index")).andExpect(handler().methodName("getAllEvents"));
 
-		verify(eventService).findAll();
+		verify(eventService).findFutureEventsOrderedByNameAndDate();
+		verify(eventService).findPastEventsOrderedByNameAndDate();
 		verifyZeroInteractions(event);
 	}
 
 	@Test
 	public void getIndexWithEvents() throws Exception {
-		when(eventService.findAll()).thenReturn(Collections.<Event> singletonList(event));
+		when(eventService.findFutureEventsOrderedByNameAndDate()).thenReturn(Collections.<Event> singletonList(event));
+		when(eventService.findPastEventsOrderedByNameAndDate()).thenReturn(Collections.<Event> singletonList(event));
 
 		mvc.perform(get("/events").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
 				.andExpect(view().name("events/index")).andExpect(handler().methodName("getAllEvents"));
 
-		verify(eventService).findAll();
+		verify(eventService).findFutureEventsOrderedByNameAndDate();
+		verify(eventService).findPastEventsOrderedByNameAndDate();
 		verifyZeroInteractions(event);
 	}
 	
