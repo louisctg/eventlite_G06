@@ -26,11 +26,11 @@ public class Venue {
 	@PositiveIntegerConstraint
 	private Integer capacity;
 	
-	@Size(max = 299, message = "Road name must have <300 characters.")
-	private String roadname;
-	
 	@PostCodeConstraint
 	private String postcode;
+	
+	@Size(max = 299, message = "Road name must have <300 characters.")
+	private String city;
 	
 	@OneToMany(targetEntity = Event.class,cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Event> events = new ArrayList<>();
@@ -43,21 +43,24 @@ public class Venue {
 		capacity = requiredCapacity;
 	}
 	
-	public Venue(int requiredId, String requiredName, int requiredCapacity) {
-		id = requiredId;
+	public Venue(String requiredName, int requiredCapacity, String requiredCity, 
+			      String requiredPostcode) {
 		name = requiredName;
 		capacity = requiredCapacity;
-	}
-	
-	public Venue(int requiredId, String requiredName, int requiredCapacity, String requiredRoadname, String requiredPostcode) {
-		id = requiredId;
-		name = requiredName;
-		capacity = requiredCapacity;
-		roadname = requiredRoadname;
+		city = requiredCity;
 		postcode = requiredPostcode;
 	}
 	
-
+	public Venue(int requiredId, String requiredName, int requiredCapacity, 
+			       String requiredCity, String requiredPostcode) 
+	{
+		id = requiredId;
+		name = requiredName;
+		capacity = requiredCapacity;
+		city = requiredCity;
+		postcode = requiredPostcode;
+	}	
+	
 	public long getId() {
 		return id;
 	}
@@ -83,14 +86,12 @@ public class Venue {
 	}
 	
 	public String getAddress() {
-		return roadname+' '+postcode;
-	}
-
-	public void setAddress(String roadname) {
-		this.roadname = roadname;
+		return city + ", " + postcode;
 	}
 	
-	public void getAddress(String postcode) {
+	public void setAddress(String city, String postcode)
+	{
+		this.city = city;
 		this.postcode = postcode;
 	}
 }
