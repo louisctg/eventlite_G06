@@ -84,7 +84,7 @@ public class EventsController {
 		}
 		
 		eventService.save(event);
-		redirectAttrs.addFlashAttribute("ok_message", "New greeting added.");
+		redirectAttrs.addFlashAttribute("ok_message", "New event added.");
 		
 		return "redirect:/events";
 	}

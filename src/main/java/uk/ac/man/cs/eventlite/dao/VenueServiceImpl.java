@@ -68,4 +68,8 @@ public class VenueServiceImpl implements VenueService {
 		return top3Venues;
 	}
 
+	public Venue findOne(long id) {
+		return venueRepository.findOne(id);
+	}
+
 }
