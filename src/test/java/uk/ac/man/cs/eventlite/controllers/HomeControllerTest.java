@@ -1,7 +1,17 @@
 package uk.ac.man.cs.eventlite.controllers;
 
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
+
 import static org.junit.Assert.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+
+import java.util.Collections;
 
 import javax.servlet.Filter;
 
@@ -14,6 +24,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -61,8 +72,30 @@ public class HomeControllerTest {
 	}
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
-	}
+	public void testHomepageNoEventsNoVenues() throws Exception {
+		when(eventService.findNext3UpcomingEvents()).thenReturn(Collections.<Event> emptyList());
+		when(venueService.findTop3VenuesWithMostEvents()).thenReturn(Collections.<Venue> emptyList());
 
+		mvc.perform(get("/").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
+			.andExpect(view().name("index")).andExpect(handler().methodName("index"));
+		
+		verify(eventService).findNext3UpcomingEvents();
+		verify(venueService).findTop3VenuesWithMostEvents();
+		verifyZeroInteractions(event);
+		verifyZeroInteractions(venue);
+	}
+	
+	@Test
+	public void testHomepageOneEventOneVenue() throws Exception {
+		when(eventService.findNext3UpcomingEvents()).thenReturn(Collections.<Event> singletonList(event));
+		when(venueService.findTop3VenuesWithMostEvents()).thenReturn(Collections.<Venue> singletonList(venue));
+		
+		mvc.perform(get("/").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
+		.andExpect(view().name("index")).andExpect(handler().methodName("index"));
+
+		verify(eventService).findNext3UpcomingEvents();
+		verify(venueService).findTop3VenuesWithMostEvents();
+		verifyZeroInteractions(event);
+		verifyZeroInteractions(venue);
+	}
 }
