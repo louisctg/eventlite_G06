@@ -30,7 +30,7 @@ public class VenuesControllerApi {
 	@RequestMapping(method = RequestMethod.GET)
 	public Resources<Resource<Venue>> getAllVenues() {
 
-		return venueToResource(venueService.findAll());
+		return venueToResource(venueService.findAllInAlphabeticalOrder());
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)

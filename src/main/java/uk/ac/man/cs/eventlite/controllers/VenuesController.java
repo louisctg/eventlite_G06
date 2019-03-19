@@ -28,7 +28,7 @@ public class VenuesController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String getAllVenues(Model model) {
 
-		model.addAttribute("venues", venueService.findAll());
+		model.addAttribute("venues", venueService.findAllInAlphabeticalOrder());
 
 		return "venues/index";
 	}
