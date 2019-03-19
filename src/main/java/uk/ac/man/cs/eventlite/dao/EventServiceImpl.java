@@ -157,4 +157,12 @@ public class EventServiceImpl implements EventService {
 		
 		return incomingEvents;
 	}
+
+  @Override
+  public Iterable<Event> findUpcomingEventsWithVenue(long id) {
+    Iterable<Event> incomingEvents = eventRepository.findByVenueId(id);
+
+    return incomingEvents;
+  }
+
 }

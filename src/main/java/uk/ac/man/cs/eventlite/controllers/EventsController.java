@@ -46,7 +46,6 @@ public class EventsController {
 			@RequestParam(value = "name", required = false, defaultValue = "Testing") String name, Model model) {
 		Event event = eventService.findOne(id);
 		model.addAttribute("event", event);
-		System.out.println("another debug line");
 		return "events/event";
 	}
 

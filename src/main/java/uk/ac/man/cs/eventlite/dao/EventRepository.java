@@ -36,4 +36,7 @@ public interface EventRepository extends CrudRepository<Event, Long>{
 	Iterable<Event> findTop3ByDateAfterOrderByDateAscNameAsc(Date date);
 	
 	Iterable<Event> findTop3ByDateEqualsAndTimeAfterOrderByDateAscNameAsc(Date date, Date time);
+
+	// used for upcoming events of the particular venue
+	Iterable<Event> findByVenueId(long venueId);
 }

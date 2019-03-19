@@ -27,4 +27,7 @@ public interface EventService {
 	public Iterable<Event> searchPastEventsOrderedByNameAndDateDescending(String name);
 	
 	public Iterable<Event> findNext3UpcomingEvents();
+
+	public Iterable<Event> findUpcomingEventsWithVenue(long id);
+
 }
