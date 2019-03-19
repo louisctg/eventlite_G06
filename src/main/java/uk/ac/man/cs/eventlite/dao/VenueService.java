@@ -15,4 +15,6 @@ public interface VenueService {
 	public void save(Venue venue);
 	
 	public Iterable<Venue> findTop3VenuesWithMostEvents();
+	
+	public Iterable<Venue> searchVenuesOrderedByNameAscending(String name);
 }
