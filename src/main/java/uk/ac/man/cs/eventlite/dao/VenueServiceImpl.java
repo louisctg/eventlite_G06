@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import uk.ac.man.cs.eventlite.entities.Event;
@@ -29,6 +30,11 @@ public class VenueServiceImpl implements VenueService {
 	@Override
 	public Iterable<Venue> findAll() {
 		return venueRepository.findAll();
+	}
+	
+	@Override
+	public Iterable<Venue> findAllInAlphabeticalOrder() {
+		return venueRepository.findAllByOrderByNameAsc();
 	}
 	
 	@Override
