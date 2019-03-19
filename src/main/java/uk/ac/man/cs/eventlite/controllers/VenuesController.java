@@ -1,4 +1,3 @@
-<<<<<<< Upstream, based on branch 'MVP_dev' of https://gitlab.cs.man.ac.uk/comp23412_2018/eventlite_G06.git
 package uk.ac.man.cs.eventlite.controllers;
 
 import javax.validation.Valid;
@@ -18,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
+import uk.ac.man.cs.eventlite.entities.Event;
 import uk.ac.man.cs.eventlite.entities.Venue;
 
 
