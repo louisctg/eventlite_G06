@@ -15,6 +15,5 @@
 <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
 <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 </listAttribute>
-<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_181"/>
 <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${resource_loc:/COMP23412-eventlite}"/>
 </launchConfiguration>
