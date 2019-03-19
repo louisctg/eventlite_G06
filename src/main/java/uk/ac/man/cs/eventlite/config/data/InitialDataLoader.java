@@ -37,10 +37,10 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 			return;
 		}
 
-		Venue venue1 = new Venue("Royal Albert Hall", 5544);
-		Venue venue2 = new Venue("Manchester Academy", 1000);
-		Venue venueA = new Venue("Venue A", 15);
-		Venue venueB = new Venue("Venue B", 10);
+		Venue venue1 = new Venue("Royal Albert Hall", 5544, "Kensington Gore, Kensington, London", "SW7 2AP");
+		Venue venue2 = new Venue("Manchester Academy", 1000, " Manchester University Students Union, Oxford Rd, Manchester", "M13 9PL");
+		Venue venueA = new Venue("Venue A", 15, "Kilburn Building University of Manchester, Oxford Rd, Manchester", "M13 9PL");
+		Venue venueB = new Venue("Venue B", 10, "Roscoe Building, Manchester", "M13 9PY");
 		
 		venueService.save(venue1);
 		venueService.save(venue2);
