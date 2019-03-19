@@ -17,5 +17,7 @@ public interface VenueService {
 	public Iterable<Venue> findTop3VenuesWithMostEvents();
 	
 	public Iterable<Venue> searchVenuesOrderedByNameAscending(String name);
+	
+	public void delete(long id) throws Exception;
 
 }
