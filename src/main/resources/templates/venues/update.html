@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Update venue</title>
+</head>
+<body>
+  <div layout:fragment="content">
+    <h1 th:text="${venue.name}"></h1>
+
+	 <form action="#" th:action="@{/venues/{num}(num = ${venue.id})}" th:object="${venue}" th:method="put">
+	      <div class="form-group" th:classappend="${#fields.hasErrors('name')}? has-error">
+	        <label for="name">venue name</label>
+	        <input class="form-control" type="text" name="name" id="name" th:value="${venue.name}" placeholder="Venue Name" autofocus="autofocus" />
+	        <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">errors</p>
+	      </div>
+	      <div class="form-group" th:classappend="${#fields.hasErrors('address')}? has-error">
+	        <label for="address">address</label>
+	        <input class="form-control" type="text" name="address" id="address" th:value="${{venue.address}}" placeholder="123 Placeholder Road" autofocus="autofocus" />
+	        <p class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}">errors</p>
+	      </div>
+	      <div class="form-group" th:classappend="${#fields.hasErrors('postcode')}? has-error">
+	        <label for="postcode">postcode</label>
+	        <input class="form-control" type="text" name="postcode" id="postcode" th:value="${{venue.postcode}}" placeholder="AA11 AAA" autofocus="autofocus" />
+	        <p class="text-danger" th:if="${#fields.hasErrors('postcode')}" th:errors="*{postcode}">errors</p>
+	      </div>
+          <div class="form-group" th:classappend="${#fields.hasErrors('capacity')}? has-error">
+	        <label for="capacity">capacity</label>
+	        <input class="form-control" type="text" name="capacity" id="capacity" th:value="${{venue.capacity}}" placeholder="40" autofocus="autofocus" />
+	        <p class="text-danger" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}">errors</p>
+	      </div>
+	      <button class="btn btn-primary" type="submit"><i class="fa fa-bookmark-o" aria-hidden="true"></i> Save</button>
+	      <a class="btn btn-warning" role="button" href="/venues/"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</a>
+	 </form>
+
+  </div>
+
+</body>
+</html>

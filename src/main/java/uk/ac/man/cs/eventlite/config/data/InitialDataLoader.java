@@ -37,15 +37,21 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 			return;
 		}
 
-		Venue venue1 = new Venue("Royal Albert Hall", 5544, "Kensington Gore, Kensington, London", "SW7 2AP");
-		Venue venue2 = new Venue("Manchester Academy", 1000, " Manchester University Students Union, Oxford Rd, Manchester", "M13 9PL");
-		Venue venueA = new Venue("Venue A", 15, "Kilburn Building University of Manchester, Oxford Rd, Manchester", "M13 9PL");
-		Venue venueB = new Venue("Venue B", 10, "Roscoe Building, Manchester", "M13 9PY");
+		// Build and save initial models here.
+		Venue venue1 = new Venue();
+		venue1.setName("Royal Albert Hall");
+		venue1.setCapacity(5544);
+		venue1.setAddress("London");
+		venue1.setPostcode("SW7 2AP");
+		
+		Venue venue2 = new Venue();
+		venue2.setName("Manchester Academy");
+		venue2.setCapacity(1000);
+		venue2.setAddress("Manchester");
+		venue2.setPostcode("M14 4PX");
 		
 		venueService.save(venue1);
 		venueService.save(venue2);
-		venueService.save(venueA);
-		venueService.save(venueB);
 		
 		Calendar cal = Calendar.getInstance();
 		
@@ -54,7 +60,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		cal.add(Calendar.HOUR_OF_DAY, 4);
 		alpha.setDate(cal.getTime());
 		alpha.setTime(cal.getTime());
-		alpha.setVenue(venueB);
+		alpha.setVenue(venue2);
 		
 		eventService.save(alpha);
 		
@@ -64,7 +70,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		cal.add(Calendar.HOUR_OF_DAY, 2);
 		beta.setDate(cal.getTime());
 		beta.setTime(cal.getTime());
-		beta.setVenue(venueA);
+		beta.setVenue(venue1);
 		
 		eventService.save(beta);
 		
@@ -74,7 +80,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		cal.add(Calendar.DAY_OF_YEAR, 1);
 		apple.setDate(cal.getTime());
 		apple.setTime(cal.getTime());
-		apple.setVenue(venueA);
+		apple.setVenue(venue1);
 		
 		eventService.save(apple);
 		
@@ -84,7 +90,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		cal.add(Calendar.HOUR_OF_DAY, -2);
 		former.setDate(cal.getTime());
 		former.setTime(cal.getTime());
-		former.setVenue(venueB);
+		former.setVenue(venue2);
 		
 		eventService.save(former);
 		
@@ -94,7 +100,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		cal.add(Calendar.HOUR_OF_DAY, -4);
 		previous.setDate(cal.getTime());
 		previous.setTime(cal.getTime());
-		previous.setVenue(venueA);
+		previous.setVenue(venue1);
 		
 		eventService.save(previous);
 		
@@ -104,9 +110,8 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		cal.add(Calendar.DAY_OF_YEAR, -1);
 		past.setDate(cal.getTime());
 		past.setTime(cal.getTime());
-		past.setVenue(venueA);
+		past.setVenue(venue1);
 		
 		eventService.save(past);
-
 	}
 }
