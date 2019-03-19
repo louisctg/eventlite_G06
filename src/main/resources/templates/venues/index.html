@@ -20,7 +20,7 @@
       </thead>
       <tbody>
         <tr th:each="v : ${venues}">
-          <td th:text="${{v.name}}">My Venue</td>
+          <td><a th:href="@{/venues/{id}(id=${v.id})}" th:text="${v.name}"></a></td>
           <td th:text="${{v.address}}">Venue Address</td>
           <td th:text="${{v.capacity}}">Venue Capacity</td>
           <div sec:authorize="hasRole('ADMINISTRATOR')">

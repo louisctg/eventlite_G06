@@ -14,7 +14,7 @@
         <div class="card" style="font-size:20px;">
           <div class="card-body">
             <p class="card-text"><i class="fa fa-bolt" style="padding-right:10px;"></i><span th:text="${event.name}"/></p>
-            <p class="card-text"><i class="fa fa-map-marker" style="padding-right:10px;"></i><span th:text="${event.venue.name}"/></p>
+            <p class="card-text"><i class="fa fa-map-marker" style="padding-right:10px;"></i><a th:href="@{/venues/{id}(id=${event.venue.id})}" th:text="${event.venue.name}"></a></p>
             <p class="card-text"><i class="fa fa-calendar" style="padding-right:10px;"></i><span th:text="${event.date}"/></p>
             <p class="card-text"><i class="fa fa-clock-o" style="padding-right:10px;"></i><span th:text="${event.time}"/></p>
             <p class="card-text"><span th:text="${event.description}"/></p>
