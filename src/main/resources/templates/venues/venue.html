@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/default}">
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<head>
+  <title>Venue page</title>
+</head>
+<body>
+  <div layout:fragment="content">
+    <h1>Venue</h1>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="card" style="font-size:20px;">
+          <div class="card-body">
+            <p class="card-text"><i class="fa fa-bolt" style="padding-right:10px;"></i><span th:text="${{venue.name}}"/></p>
+            <p class="card-text"><i class="fas fa-home" style="padding-right:10px;"></i><span th:text="${{venue.address}}"/></p>
+            <p class="card-text"><i class="fas fa-male" style="padding-right:10px;"></i><span th:text="${{venue.capacity}}"/></p>
+
+	<h3>Events coming up</h3>
+		<div th:each="e : ${events}">
+			<div class="card-body">
+          	   <p class="card-text"><i class="fa fa-bolt" style="padding-right:10px;"></i>Event <span th:text="${e.name}"/></p>
+          	   <p class="card-text"><i class="fa fa-calendar" style="padding-right:10px;"></i><span th:text="${e.date}"/></p>
+         	   <p class="card-text"><i class="fa fa-map-marker" style="padding-right:10px;"></i>Venue <span th:text="${e.venue.name}"/></p>
+        	</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,3 +1,4 @@
+<<<<<<< Upstream, based on branch 'MVP_dev' of https://gitlab.cs.man.ac.uk/comp23412_2018/eventlite_G06.git
 package uk.ac.man.cs.eventlite.controllers;
 
 import javax.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
 import uk.ac.man.cs.eventlite.entities.Venue;
 
@@ -26,6 +28,9 @@ public class VenuesController {
 	
 	@Autowired
 	private VenueService venueService;
+	
+	@Autowired
+	private EventService eventService;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String getAllVenues(Model model) {
@@ -99,5 +104,17 @@ public class VenuesController {
 		redirAttrs.addFlashAttribute("ok_message", "Venue updated.");
 
 		return "redirect:/venues";
+	}
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public String getVenue(@PathVariable("id") long id,
+	    @RequestParam(value = "name", required = false, defaultValue = "Testing") String name, Model model) {
+	  Venue venue = venueService.findOne(id);
+	  model.addAttribute("venue", venue);
+
+	  Iterable<Event> events = eventService.findUpcomingEventsWithVenue(id);
+
+	  model.addAttribute("events",events);
+
+	  return "venues/venue";
 	}
 }
