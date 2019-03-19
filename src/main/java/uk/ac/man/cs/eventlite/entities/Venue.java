@@ -26,6 +26,7 @@ public class Venue {
 	@Size(max = 256, message = "The venue name must have 256 characters or less.")
 	private String name;
 	
+	// NOTE: SQL has limit of 255
 	@NotBlank(message = "Please enter an address")
 	@Size(max = 300, message = "The address must be 300 characters or less.")
 	private String address;
@@ -76,7 +77,7 @@ public class Venue {
 	}
 	
 	public String getPostcode() {
-		return this.address;
+		return this.postcode;
 	}
 	
 	public void setPostcode(String postcode) {
