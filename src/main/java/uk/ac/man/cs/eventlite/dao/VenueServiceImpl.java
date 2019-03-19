@@ -41,6 +41,17 @@ public class VenueServiceImpl implements VenueService {
 		//update the database with a new venue
 		venueRepository.save(venue);
 	}
+
+	@Override
+	public void delete(long id) throws Exception {
+		//update the database with a new venue
+		try {
+			venueRepository.delete(id);
+		} catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
 	
 	@Override
 	public Venue findOne(long id) {

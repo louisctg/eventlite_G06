@@ -105,16 +105,39 @@ public class VenuesController {
 
 		return "redirect:/venues";
 	}
+	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public String getVenue(@PathVariable("id") long id,
 	    @RequestParam(value = "name", required = false, defaultValue = "Testing") String name, Model model) {
 	  Venue venue = venueService.findOne(id);
 	  model.addAttribute("venue", venue);
+	  
+	  try
+	  {
+		  Iterable<Event> events = eventService.findUpcomingEventsWithVenue(id);
 
-	  Iterable<Event> events = eventService.findUpcomingEventsWithVenue(id);
+		  model.addAttribute("events",events);
+	  } catch ( Exception e ) {
+		  e.printStackTrace();
+	  }
 
-	  model.addAttribute("events",events);
 
 	  return "venues/venue";
+	}
+	
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+	public String deleteVenue(@PathVariable("id") long id)
+	{
+		try{
+			venueService.delete(id);
+			
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		return "redirect:/venues";
+		
+		
 	}
 }
