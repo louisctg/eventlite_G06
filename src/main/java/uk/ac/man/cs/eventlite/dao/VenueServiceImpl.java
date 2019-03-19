@@ -1,6 +1,7 @@
 package uk.ac.man.cs.eventlite.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import uk.ac.man.cs.eventlite.entities.Venue;
@@ -19,6 +20,11 @@ public class VenueServiceImpl implements VenueService {
 	@Override
 	public Iterable<Venue> findAll() {
 		return venueRepository.findAll();
+	}
+	
+	@Override
+	public Iterable<Venue> findAllInAlphabeticalOrder() {
+		return venueRepository.findAllByOrderByNameAsc();
 	}
 	
 	@Override
