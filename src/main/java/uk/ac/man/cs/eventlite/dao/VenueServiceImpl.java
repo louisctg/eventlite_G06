@@ -41,6 +41,12 @@ public class VenueServiceImpl implements VenueService {
 		//update the database with a new venue
 		venueRepository.save(venue);
 	}
+	
+	@Override
+	public Venue findOne(long id) {
+		return venueRepository.findOne(id);
+	}
+
 
 	@Override
 	public Iterable<Venue> findTop3VenuesWithMostEvents() {
@@ -71,10 +77,6 @@ public class VenueServiceImpl implements VenueService {
 		}
 		
 		return top3Venues;
-	}
-
-	public Venue findOne(long id) {
-		return venueRepository.findOne(id);
 	}
 
 	public Iterable<Venue> searchVenuesOrderedByNameAscending(String name){
