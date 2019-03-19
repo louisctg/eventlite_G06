@@ -5,6 +5,13 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <head>
   <title>All events</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css' rel='stylesheet' />
+<style>
+body { margin:0; padding:0; }
+#map { position:relative; top:0; bottom:0; width:100%; height: 200px;}
+</style>
 </head>
 <body>
   <div layout:fragment="content">
@@ -80,13 +87,10 @@
         </tr>
       </tbody>
     </table>
+
     
     
-    
-    
-    
-    
-    
+
     
     
     <!-- below we have the creation of a button that when pressed will redirect to new html page-->
@@ -97,8 +101,22 @@
 	<p>
       <a class="btn btn-primary" role="button" href="/events/search"><i class="fa fa-plus" aria-hidden="true"></i> Search By Name</a>
     </p>
-    
+    <div class="row"><div class="col-lg-12">
+          <div id='map'></div>
+          </div></div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoibWFyY2VsNDF4ZCIsImEiOiJjanRmcGE2bjEwZzFxM3lycm90bXB6cndnIn0.sYaAHPeiuJ5ivfyBE8sCAQ';
+var map = new mapboxgl.Map({
+container: 'map', // container id
+style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
+center: [-74.50, 40], // starting position [lng, lat]
+zoom: 9 // starting zoom
+});
+</script>
   </div>
+
+    
+    
 
 </body>
 </html>
