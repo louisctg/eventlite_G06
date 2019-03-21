@@ -38,20 +38,21 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		}
 
 		// Build and save initial models here.
-		Venue venue1 = new Venue();
-		venue1.setName("Royal Albert Hall");
-		venue1.setCapacity(5544);
-		venue1.setAddress("London");
-		venue1.setPostcode("SW7 2AP");
-		
-		Venue venue2 = new Venue();
-		venue2.setName("Manchester Academy");
-		venue2.setCapacity(1000);
-		venue2.setAddress("Manchester");
-		venue2.setPostcode("M14 4PX");
-		
+		Venue venue1 = new Venue("Royal Albert Hall", 5544, "Kensington Gore, Kensington, London", "SW7 2AP");
+		Venue venue2 = new Venue("Manchester Academy", 1000, " Manchester University Students Union, Oxford Rd, Manchester", "M13 9PL");
+		Venue venueA = new Venue("Venue A", 15, "Kilburn Building University of Manchester, Oxford Rd, Manchester", "M13 9PL");
+		Venue venueB = new Venue("Venue B", 10, "Roscoe Building, Manchester", "M13 9PY");
+
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 		venueService.save(venue1);
 		venueService.save(venue2);
+		venueService.save(venueA);
+		venueService.save(venueB);
 		
 		Calendar cal = Calendar.getInstance();
 		
