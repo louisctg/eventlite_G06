@@ -39,15 +39,9 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 
 		// Build and save initial models here.
 		Venue venue1 = new Venue("Royal Albert Hall", 5544, "Kensington Gore, Kensington, London", "SW7 2AP");
-		Venue venue2 = new Venue("Manchester Academy", 1000, " Manchester University Students Union, Oxford Rd, Manchester", "M13 9PL");
-		Venue venueA = new Venue("Venue A", 15, "Kilburn Building University of Manchester, Oxford Rd, Manchester", "M13 9PL");
+		Venue venue2 = new Venue("Manchester Academy", 1000, "Manchester Academy, Manchester", "M13 9PR");
+		Venue venueA = new Venue("Venue A", 15, "Kilburn Building, University of Manchester, Manchester", "M13 9PL");
 		Venue venueB = new Venue("Venue B", 10, "Roscoe Building, Manchester", "M13 9PY");
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 
 		venueService.save(venue1);
 		venueService.save(venue2);
@@ -81,7 +75,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		cal.add(Calendar.DAY_OF_YEAR, 1);
 		apple.setDate(cal.getTime());
 		apple.setTime(cal.getTime());
-		apple.setVenue(venue1);
+		apple.setVenue(venueA);
 		
 		eventService.save(apple);
 		

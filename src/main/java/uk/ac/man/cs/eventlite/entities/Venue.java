@@ -1,5 +1,6 @@
 package uk.ac.man.cs.eventlite.entities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,6 +108,7 @@ public class Venue {
 	
 	public void setAddress(String address) {
 		this.address = address;
+		setCoordinates(address, postcode);
 	}
 	
 	public String getPostcode() {
@@ -115,6 +117,7 @@ public class Venue {
 	
 	public void setPostcode(String postcode) {
 		this.postcode = postcode;
+		setCoordinates(address, postcode);
 	}
 	
 	public double getLat() {
@@ -144,28 +147,23 @@ public class Venue {
 										.query(address + ", " + postcode)
 										.build();
 
-		mapboxGeocoding.enqueueCall(new Callback<GeocodingResponse>() {
-			@Override
-			public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
-				List<CarmenFeature> results = response.body().features();
-				if(results.size() > 0) {
-					setLat(results.get(0).center().latitude());
-					setLng(results.get(0).center().longitude());
-				}
-				else // set to central Manchester
-				{
-					setLat(-2.235);
-					setLng(53.46);
-				}
+		try {
+			Response<GeocodingResponse> response = mapboxGeocoding.executeCall();
+			List<CarmenFeature> results = response.body().features();
+			if(results.size() > 0) { // if coordinates were found set them
+				setLat(results.get(0).center().latitude());
+				setLng(results.get(0).center().longitude());
 			}
-			
-			@Override
-			public void onFailure(Call<GeocodingResponse> call, Throwable throwable) {
-				// set to central Manchester
+			else // otherwise, set to central Manchester
+			{
 				setLat(-2.235);
 				setLng(53.46);
 			}
-		});
+		} catch (IOException e) {
+			setLat(-2.235);
+			setLng(53.46);
+			e.printStackTrace();
+		}
 
 	}
 }
