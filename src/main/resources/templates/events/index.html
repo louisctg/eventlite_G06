@@ -6,8 +6,9 @@
 <head>
   <title>All events</title>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js'></script>
-  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css' rel='stylesheet' />
+<script src='https://api.mapbox.com/mapbox.js/v3.2.0/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v3.2.0/mapbox.css' rel='stylesheet' />
+  
 <style>
 body { margin:0; padding:0; }
 #map { position:relative; top:0; bottom:0; width:100%; height: 200px;}
@@ -97,21 +98,33 @@ body { margin:0; padding:0; }
           <div id='map'></div>
     </div>
     
-	<script type="text/javascript" th:inline="javascript">
-		mapboxgl.accessToken = 'pk.eyJ1IjoibWFyY2VsNDF4ZCIsImEiOiJjanRmcGE2bjEwZzFxM3lycm90bXB6cndnIn0.sYaAHPeiuJ5ivfyBE8sCAQ';
-		var map = new mapboxgl.Map({ container: 'map', // container id
-									 style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
-									 center: [-2.242631,53.480759], // starting position [lng, lat]
-									 zoom: 12 // starting zoom
-									});
-		/*<![CDATA[*/
-			var future_events = /*[[${{future_events}}]]*/ null;
-		/*]]>*/
-		console.log(future_events);
-
-		
+	<script th:inline="javascript"> 
+		events = [];
 	</script>
-  </div>
+
+	<script th:each="e : ${future_events}" th:inline="javascript">
+		events.push({'event': [[${e.name}]], 'date': [[${{e.date}}]], 'time': [[${{e.time}}]],
+					'venue': [[${e.venue.name}]],'lat': [[${e.venue.lat}]], 'lng': [[${e.venue.lng}]]});
+	</script>
+	
+	<script th:inline="javascript">
+		L.mapbox.accessToken = 'pk.eyJ1IjoibWFyY2VsNDF4ZCIsImEiOiJjanRmcGE2bjEwZzFxM3lycm90bXB6cndnIn0.sYaAHPeiuJ5ivfyBE8sCAQ';
+		var map =	L.mapbox.map('map').setView([53.46, -2.235], 11)
+    								   .addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/streets-v11'));
+
+		events.forEach(function(event) {
+				L.marker([event.lat, event.lng], {
+		    				icon: L.mapbox.marker.icon({
+		        				'marker-size': 'large',
+		        				'marker-symbol': 'marker',
+		        				'marker-color': '#fa0'
+		    					})
+							}).addTo(map);
+						});
+		console.log(events);
+	</script>
+	
+	</div>
 
 </body>
 </html>

@@ -1,5 +1,6 @@
 package uk.ac.man.cs.eventlite.entities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,14 +13,24 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
+import com.mapbox.geojson.Point;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 @Entity
 @Table(name = "Venue")
 public class Venue {
 
+	public static final String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoibWFyY2VsNDF4ZCIsImEiOiJjanRmcGE2bjEwZzFxM3lycm90bXB6cndnIn0.sYaAHPeiuJ5ivfyBE8sCAQ";
+	
 	@Id
 	@GeneratedValue
 	private long id;
-
 
 	@NotBlank(message = "Please enter an actual name")
 	@Size(max = 255, message = "The venue name must have <256 characters.")
@@ -39,8 +50,20 @@ public class Venue {
 
 	@OneToMany(targetEntity = Event.class, mappedBy = "venue", cascade = CascadeType.MERGE, orphanRemoval = true)
 	private List<Event> events = new ArrayList<>();
+	
+	private double lat;
+	private double lng;
 
 	public Venue() {
+	}
+	
+	public Venue(String requiredName, int requiredCapacity, String requiredAddress, 
+		      String requiredPostcode) {
+		name = requiredName;
+		capacity = requiredCapacity;
+		address = requiredAddress;
+		postcode = requiredPostcode;
+		setCoordinates(address, postcode);
 	}
 	
 	public long getId() {
@@ -85,6 +108,7 @@ public class Venue {
 	
 	public void setAddress(String address) {
 		this.address = address;
+		setCoordinates(address, postcode);
 	}
 	
 	public String getPostcode() {
@@ -93,5 +117,53 @@ public class Venue {
 	
 	public void setPostcode(String postcode) {
 		this.postcode = postcode;
+		setCoordinates(address, postcode);
+	}
+	
+	public double getLat() {
+		return lat;
+	}
+
+	public void setLat(double lat) {
+		this.lat = lat;
+	}
+
+	public double getLng() {
+		return lng;
+	}
+
+	public void setLng(double lng) {
+		this.lng = lng;
+	}
+
+	public void setCapacity(Integer capacity) {
+		this.capacity = capacity;
+	}
+
+	public void setCoordinates(String address, String postcode)
+	{
+		MapboxGeocoding mapboxGeocoding = MapboxGeocoding.builder()
+										.accessToken(MAPBOX_ACCESS_TOKEN)
+										.query(address + ", " + postcode)
+										.build();
+
+		try {
+			Response<GeocodingResponse> response = mapboxGeocoding.executeCall();
+			List<CarmenFeature> results = response.body().features();
+			if(results.size() > 0) { // if coordinates were found set them
+				setLat(results.get(0).center().latitude());
+				setLng(results.get(0).center().longitude());
+			}
+			else // otherwise, set to central Manchester
+			{
+				setLat(-2.235);
+				setLng(53.46);
+			}
+		} catch (IOException e) {
+			setLat(-2.235);
+			setLng(53.46);
+			e.printStackTrace();
+		}
+
 	}
 }
