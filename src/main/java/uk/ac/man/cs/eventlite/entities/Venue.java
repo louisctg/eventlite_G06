@@ -41,7 +41,7 @@ public class Venue {
 	// NOTE: SQL has limit of 255
 	@NotBlank(message = "Please enter an address")
 	@Size(max = 300, message = "The address must be 300 characters or less.")
-	private String address;
+	private String roadname;
 	
 	@PostCodeConstraint
 	@NotBlank(message = "Please enter a postcode")
@@ -60,9 +60,9 @@ public class Venue {
 		      String requiredPostcode) {
 		name = requiredName;
 		capacity = requiredCapacity;
-		address = requiredAddress;
+		roadname = requiredAddress;
 		postcode = requiredPostcode;
-		setCoordinates(address, postcode);
+		setCoordinates(roadname, postcode);
 	}
 	
 	public long getId() {
@@ -101,12 +101,12 @@ public class Venue {
 		this.events.add(event);
 	}
 		
-	public String getAddress() {
-		return this.address;
+	public String getRoadname() {
+		return this.roadname;
 	}
 	
-	public void setAddress(String address) {
-		this.address = address;
+	public void setRoadname(String address) {
+		this.roadname = address;
 	}
 	
 	public String getPostcode() {
@@ -115,6 +115,10 @@ public class Venue {
 	
 	public void setPostcode(String postcode) {
 		this.postcode = postcode;
+	}
+	
+	public String getAddress(){
+		return roadname+','+postcode;
 	}
 	
 	public double getLat() {
