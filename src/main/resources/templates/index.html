@@ -53,6 +53,7 @@ html { font-size: 100%; }
 		<div class="card-group">
 			<div th:each="v: ${venues}" class="col-sm">
 		  		<div class="card">
+		  			<a th:href="@{/venues/{id}(id=${v.id})}">
 		 			<img class="card-img-top" src="https://intu-public.s3.amazonaws.com/leisure/trafford-centre/01-intu-trafford-centre-odeon.jpg" alt="Card image cap">
 		    			<div class="card-body">
 		      				<h5 class="" th:text="${{v.name}}"></h5>
