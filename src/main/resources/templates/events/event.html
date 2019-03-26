@@ -73,10 +73,13 @@ layout:decorate="~{layouts/default}">
 				L.marker([event.lat, event.lng], {
 		    				icon: L.mapbox.marker.icon({
 		        				'marker-size': 'large',
-		        				'marker-symbol': 'bus',
+		        				'marker-symbol': 'marker',
 		        				'marker-color': '#fa0'
 		    					})
-							}).addTo(map);
+							}).addTo(map)
+							.bindPopup(L.popup()
+							.setLatLng([event.lat, event.lng])
+							.setContent(event.event)).closePopup();
 						});
 		console.log(events);
 	</script>
