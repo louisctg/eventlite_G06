@@ -119,7 +119,10 @@ body { margin:0; padding:0; }
 		        				'marker-symbol': 'marker',
 		        				'marker-color': '#fa0'
 		    					})
-							}).addTo(map);
+							}).addTo(map)
+							.bindPopup(L.popup()
+							.setLatLng([event.lat, event.lng])
+							.setContent(event.event)).closePopup();
 						});
 		console.log(events);
 	</script>
