@@ -1,6 +1,8 @@
 package uk.ac.man.cs.eventlite.controllers;
 
 import javax.validation.Valid;
+
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +70,7 @@ public class EventsController {
 
 	@RequestMapping(method = RequestMethod.POST, value="/new", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public String createEvent(@RequestBody @Valid @ModelAttribute Event event ,
-			BindingResult errors, Model model, RedirectAttributes redirectAttrs) {
+			BindingResult errors, Model model, RedirectAttributes redirectAttrs, Principal principal) {
 
 		if (errors.hasErrors()) {
 			model.addAttribute("event", event);
@@ -82,6 +84,7 @@ public class EventsController {
 			return "events/new";
 		}
 		
+		event.setOrganiser(principal.getName());
 		eventService.save(event);
 		redirectAttrs.addFlashAttribute("ok_message", "New event added.");
 		
