@@ -33,20 +33,31 @@ body { margin:0; padding:0; }
         </tr>
       </thead>
       <tbody>
-        <tr th:each="e : ${future_events}">
-          <td><a th:href="@{/events/{id}(id=${e.id})}" th:text="${e.name}">My Event</a></td>
-          <td><a th:href="@{/venues/{id}(id=${e.venue.id})}" th:text="${e.venue.name}">Event Venue</a></td>
-          <td th:text="${{e.date}}">Event date</td>
-          <td th:text="${{e.time}}">Event time</td>
-          <div sec:authorize="hasRole('ADMINISTRATOR')">
-          <td>
-          	<a type="submit" class="btn btn-info" th:href="${'/events/update/'+{e.id}}"><i class="glyphicon glyphicon-pencil" aria-hidden="true"></i> Edit</a>
-          </td>
-          <td>
-          	<a type="submit" class="btn btn-danger" th:href="${'/events/delete/'+{e.id}}"><i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Delete</a>
-          </td>
-          </div>
-        </tr>
+          <div th:if="${#authorization.expression('hasRole(''ADMINISTRATOR'')')}">
+		  	<tr th:each="e : ${future_events_organiser}">
+		  
+          	<td><a th:href="@{/events/{id}(id=${e.id})}" th:text="${e.name}">My Event</a></td>
+          	<td><a th:href="@{/venues/{id}(id=${e.venue.id})}" th:text="${e.venue.name}">Event Venue</a></td>
+          	<td th:text="${{e.date}}">Event date</td>
+          	<td th:text="${{e.time}}">Event time</td>
+
+          	<td>
+          		<a type="submit" class="btn btn-info" th:href="${'/events/update/'+{e.id}}"><i class="glyphicon glyphicon-pencil" aria-hidden="true"></i> Edit</a>
+          	 </td>
+          	 <td>
+          		<a type="submit" class="btn btn-danger" th:href="${'/events/delete/'+{e.id}}"><i class="glyphicon glyphicon-remove" aria-hidden="true"></i> Delete</a>
+         	 </td>
+        	</tr>
+		</div>
+		<div th:unless="${#authorization.expression('hasRole(''ADMINISTRATOR'')')}">
+		  <tr th:each="e : ${future_events}"> 
+          	  <td><a th:href="@{/events/{id}(id=${e.id})}" th:text="${e.name}">My Event</a></td>
+        	  <td><a th:href="@{/venues/{id}(id=${e.venue.id})}" th:text="${e.venue.name}">Event Venue</a></td>
+    	      <td th:text="${{e.date}}">Event date</td>
+	          <td th:text="${{e.time}}">Event time</td>
+          </tr>
+		</div>
+
       </tbody>
     </table>
     
@@ -101,11 +112,19 @@ body { margin:0; padding:0; }
 	<script th:inline="javascript"> 
 		events = [];
 	</script>
-
-	<script th:each="e : ${future_events}" th:inline="javascript">
+	<div th:if="${#authorization.expression('hasRole(''ADMINISTRATOR'')')}">
+				<script th:each="e : ${future_events_organiser}" th:inline="javascript">
 		events.push({'event': [[${e.name}]], 'date': [[${{e.date}}]], 'time': [[${{e.time}}]],
 					'venue': [[${e.venue.name}]],'lat': [[${e.venue.lat}]], 'lng': [[${e.venue.lng}]]});
-	</script>
+		</script>
+	</div>
+	<div th:unless="${#authorization.expression('hasRole(''ADMINISTRATOR'')')}">
+		<script th:each="e : ${future_events}" th:inline="javascript">
+		events.push({'event': [[${e.name}]], 'date': [[${{e.date}}]], 'time': [[${{e.time}}]],
+					'venue': [[${e.venue.name}]],'lat': [[${e.venue.lat}]], 'lng': [[${e.venue.lng}]]});
+		</script>
+	</div>
+	
 	
 	<script th:inline="javascript">
 		L.mapbox.accessToken = 'pk.eyJ1IjoibWFyY2VsNDF4ZCIsImEiOiJjanRmcGE2bjEwZzFxM3lycm90bXB6cndnIn0.sYaAHPeiuJ5ivfyBE8sCAQ';

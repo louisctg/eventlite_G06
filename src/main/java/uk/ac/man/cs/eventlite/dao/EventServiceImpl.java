@@ -164,5 +164,24 @@ public class EventServiceImpl implements EventService {
 
     return incomingEvents;
   }
-
+  @Override
+  public Iterable<Event> futureEventsOrganiser(Iterable<Event> events, String organiserName)
+  {
+	List<Event> incomingEvents = new ArrayList<Event>();
+	for(Event event: events) {
+		if(event.getOrganiser().equals(organiserName))
+			incomingEvents.add(event);
+	}
+	return incomingEvents;  
+  }
+  @Override
+  public Iterable<Event> pastEventsOrganiser(Iterable<Event> events, String organiserName)
+  {
+		List<Event> incomingEvents = new ArrayList<Event>();
+		for(Event event: events) {
+			if(event.getOrganiser().equals(organiserName))
+				incomingEvents.add(event);
+		}
+		return incomingEvents;  
+  }
 }

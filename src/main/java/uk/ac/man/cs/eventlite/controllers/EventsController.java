@@ -35,11 +35,28 @@ public class EventsController {
 	private VenueService venueService;
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String getAllEvents(Model model) {
+	public String getAllEvents(Model model, Principal principal) {
 
 		//model.addAttribute("events", eventService.findAll());
-		model.addAttribute("future_events", eventService.findFutureEventsOrderedByNameAndDate());
-		model.addAttribute("past_events", eventService.findPastEventsOrderedByNameAndDate());
+		Iterable<Event> futureEvents  =  eventService.findFutureEventsOrderedByNameAndDate();
+		Iterable<Event> pastEvents  =  eventService.findPastEventsOrderedByNameAndDate();
+		if(principal != null)
+		{
+		Iterable<Event> futureEventsOrganiser  =  eventService.futureEventsOrganiser(futureEvents, principal.getName());
+		Iterable<Event> pastEventsOrganiser  =  eventService.pastEventsOrganiser(pastEvents, principal.getName());
+		model.addAttribute("future_events_organiser", futureEventsOrganiser);
+		model.addAttribute("past_events_organiser", pastEventsOrganiser);
+		model.addAttribute("future_events", futureEvents);
+		//the following line will be useful for the Show the location of one specific event on a map
+		model.addAttribute("past_events", pastEvents);
+		}
+		else
+		{
+		model.addAttribute("future_events", futureEvents);
+		model.addAttribute("past_events", pastEvents);
+		}
+
+
 		return "events/index";
 	}
 	
