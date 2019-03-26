@@ -86,7 +86,7 @@ public class Venue {
 		return this.capacity;
 	}
 
-	public void setCapacity(int capacity) {
+	public void setCapacity(Integer capacity) {
 		this.capacity = capacity;
 	}
 	
@@ -134,10 +134,6 @@ public class Venue {
 
 	public void setLng(double lng) {
 		this.lng = lng;
-	}
-
-	public void setCapacity(Integer capacity) {
-		this.capacity = capacity;
 	}
 
 	public void setCoordinates(String address, String postcode)
