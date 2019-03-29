@@ -19,10 +19,10 @@
         <input class="form-control" type="number" name="capacity" id="capacity" th:value="${venue.capacity}" placeholder="Should be a positive integer!" autofocus="autofocus" required/>
         <p class="text-danger" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}">errors</p>
       </div>
-      <div class="form-group" th:classappend="${#fields.hasErrors('city')}? has-error">
+      <div class="form-group" th:classappend="${#fields.hasErrors('roadname')}? has-error">
         <label for="address">Road Name</label>
-        <input class="form-control" type="text" rows="5" name="city" id="city" th:value="${venue.city}" placeholder="Enter a proper road name" autofocus="autofocus" required/>
-        <p class="text-danger" th:if="${#fields.hasErrors('city')}" th:errors="*{city}">errors</p>
+        <input class="form-control" type="text" rows="5" name="roadname" id="roadname" th:value="${venue.roadname}" placeholder="Enter a proper road name" autofocus="autofocus" required/>
+        <p class="text-danger" th:if="${#fields.hasErrors('roadname')}" th:errors="*{roadname}">errors</p>
       </div>
       <div class="form-group" th:classappend="${#fields.hasErrors('postcode')}? has-error">
         <label for="name">Postcode</label>

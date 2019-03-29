@@ -4,6 +4,7 @@ layout:decorate="~{layouts/default}">
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <head>
   <title>Event page</title>
+
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
   <script src='https://api.mapbox.com/mapbox.js/v3.2.0/mapbox.js'></script>
   <link href='https://api.mapbox.com/mapbox.js/v3.2.0/mapbox.css' rel='stylesheet' />
@@ -12,15 +13,17 @@ layout:decorate="~{layouts/default}">
   body { margin:0; padding:0; }
   #map { position:relative; top:0; bottom:0; width:100%; height: 500px;}
   </style>
+
 </head>
+
 <body>
   <div layout:fragment="content">
     <h1>Event</h1>
     
     <table class="table table-striped table-hover">
+    
       <thead>
         <tr>
-          
           <th><i class="fa fa-bolt"></i> Event</th>
           <th><i class="fa fa-map-marker"></i> Venue</th>
           <th><i class="fa fa-calendar"></i> Date</th>
@@ -32,6 +35,7 @@ layout:decorate="~{layouts/default}">
           </div>
         </tr>
       </thead>
+      
       <tbody>
         <tr>
           <td><a th:href="@{/events/{id}(id=${event.id})}" th:text="${event.name}">My Event</a></td>
@@ -53,37 +57,40 @@ layout:decorate="~{layouts/default}">
     
     <div class="row"><div class="col-lg-12">
     	<div id='map'></div>
+
     </div>
     
-	<script th:inline="javascript"> 
-		events = [];
-	</script>
-
-	<script th:inline="javascript">
-		events.push({'event': [[${event.name}]], 'date': [[${{event.date}}]], 'time': [[${{event.time}}]],
-					'venue': [[${event.venue.name}]],'lat': [[${event.venue.lat}]], 'lng': [[${event.venue.lng}]]});
-	</script>
+		<script th:inline="javascript"> 
+			events = [];
+		</script>
 	
-	<script th:inline="javascript">
-		L.mapbox.accessToken = 'pk.eyJ1IjoibWFyY2VsNDF4ZCIsImEiOiJjanRmcGE2bjEwZzFxM3lycm90bXB6cndnIn0.sYaAHPeiuJ5ivfyBE8sCAQ';
-		var map =	L.mapbox.map('map').setView([53.46, -2.235], 11)
-    								   .addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/streets-v11'));
-
-		events.forEach(function(event) {
-				L.marker([event.lat, event.lng], {
-		    				icon: L.mapbox.marker.icon({
-		        				'marker-size': 'large',
-		        				'marker-symbol': 'marker',
-		        				'marker-color': '#fa0'
-		    					})
-							}).addTo(map)
-							.bindPopup(L.popup()
-							.setLatLng([event.lat, event.lng])
-							.setContent(event.event)).closePopup();
-						});
-		console.log(events);
-	</script>
-    
-  </div>
+		<script th:each="e : ${event}" th:inline="javascript">
+			events.push({'event': [[${e.name}]], 'date': [[${{e.date}}]], 'time': [[${{e.time}}]],
+						'venue': [[${e.venue.name}]],'lat': [[${e.venue.lat}]], 'lng': [[${e.venue.lng}]]});
+		</script>
+		
+		<script th:inline="javascript">
+			L.mapbox.accessToken = 'pk.eyJ1IjoibWFyY2VsNDF4ZCIsImEiOiJjanRmcGE2bjEwZzFxM3lycm90bXB6cndnIn0.sYaAHPeiuJ5ivfyBE8sCAQ';
+			var map =	L.mapbox.map('map').setView([53.46, -2.235], 11)
+	    								   .addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/streets-v11'));
+			events.forEach(function(event) {
+					L.marker([event.lat, event.lng], {
+			    				icon: L.mapbox.marker.icon({
+			        				'marker-size': 'large',
+			        				'marker-symbol': 'marker',
+			        				'marker-color': '#fa0'
+			    					})
+								}).addTo(map)
+								.bindPopup(L.popup()
+								.setLatLng([event.lat, event.lng])
+								.setContent(event.event)).closePopup();
+								
+								map.setView([event.lat,event.lng], 11, {animation: true});
+							});
+			console.log(events);
+		</script>
+	
+  	</div>
+  	
 </body>
 </html>
