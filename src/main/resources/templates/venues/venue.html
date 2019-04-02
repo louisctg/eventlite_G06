@@ -41,25 +41,10 @@ layout:decorate="~{layouts/default}">
       </tbody>
     </table>
     
-    <h3>Upcoming Events</h3>
-    <table class="table table-striped table-hover">
-      <thead>
-        <tr>
-          <th><i class="fa fa-bolt"></i> Event Name</th>
-          <th><i class="fa fa-calendar"></i> Date</th>
-          <th><i class="fa fa-calendar"></i> Time</th>
-          <th><i class="fa fa-map-marker"></i> Address</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:each="e : ${events}">
-          <td><a th:href="@{/events/{id}(id=${e.id})}" th:text="${e.name}">Event Name</a></td>
-          <td th:text="${e.date}">Event Date</td>
-          <td th:text="${e.time}">Event Time</td>
-          <td th:text="${{e.venue.name}}">Event Venue Name</td>
-        </tr>
-      </tbody>
-    </table>
+    <p>
+	  <a class="btn btn-primary" role="button" href="/venues"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back to Venue List</a>
+	</p>
+	
   </div>
 </body>
 </html>
