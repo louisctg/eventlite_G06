@@ -3,6 +3,7 @@ package uk.ac.man.cs.eventlite.controllers;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
@@ -27,9 +28,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import uk.ac.man.cs.eventlite.EventLite;
+import uk.ac.man.cs.eventlite.config.Security;
 import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
 import uk.ac.man.cs.eventlite.entities.Event;
@@ -102,4 +105,22 @@ public class EventsControllerTest {
 		verifyZeroInteractions(event);
 	}
 	
+	@Test
+	public void linkToSearchEvent() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/events/search")
+				.accept(MediaType.TEXT_HTML))
+		.andExpect(status().isOk()).andExpect(view().name("events/search"));
+	}
+	
+	@Test
+	public void searchEvent() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/events/result?key=Event")
+				.accept(MediaType.TEXT_HTML))
+		.andExpect(status().isOk()).andExpect(view().name("events/result"))
+		.andExpect(handler().methodName("searchByKey"));
+		
+		verify(eventService).searchFutureEventsOrderedByNameAndDateAscending("Event");
+		verify(eventService).searchPastEventsOrderedByNameAndDateDescending("Event");
+		verifyZeroInteractions(event);
+	}
 }
