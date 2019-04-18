@@ -92,9 +92,8 @@ public class VenuesControllerTest {
 	}
 	
 		
-/*	@Test
-	public void removeIndexVenue() throws Exception {
-		
+	@Test
+	public void removeVenue() throws Exception {
 		
 		Venue venue1 = new Venue();
 		
@@ -102,12 +101,12 @@ public class VenuesControllerTest {
 		
 		when(venueService.findOne(0)).thenReturn(venue1);
 
-		mvc.perform(get("/delete/0").accept(MediaType.TEXT_HTML)).andExpect(status().isNotFound())
-		.andExpect(view().name("venues")).andExpect(handler().methodName("deleteVenue"));
+		mvc.perform(MockMvcRequestBuilders.get("/venues/delete/0").accept(MediaType.TEXT_HTML)).andExpect(status().isFound())
+		.andExpect(view().name("redirect:/venues")).andExpect(handler().methodName("deleteVenue"));
 
-		verify(venueService,times(1)).delete(0);
+		verify(venueService).delete(0);
 		verifyZeroInteractions(venue);
-	} */
+	} 
 
 	@Test
 	public void getNewVenue() throws Exception {
