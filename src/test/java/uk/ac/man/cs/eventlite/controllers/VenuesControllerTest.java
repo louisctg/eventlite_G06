@@ -93,17 +93,13 @@ public class VenuesControllerTest {
 	
 		
 	@Test
-	public void removeVenue() throws Exception {
+	public void getRemoveVenue() throws Exception {
 		
 		Venue venue1 = new Venue();
-		
 		venueService.save(venue1);
-		
 		when(venueService.findOne(0)).thenReturn(venue1);
-
 		mvc.perform(MockMvcRequestBuilders.get("/venues/delete/0").accept(MediaType.TEXT_HTML)).andExpect(status().isFound())
 		.andExpect(view().name("redirect:/venues")).andExpect(handler().methodName("deleteVenue"));
-
 		verify(venueService).delete(0);
 		verifyZeroInteractions(venue);
 	} 

@@ -117,7 +117,7 @@ public class EventsController {
 	}
 	
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-	public String delete(@PathVariable("id") long id)
+	public String deleteEvent(@PathVariable("id") long id)
 	{
 		eventService.delete(id);
 		

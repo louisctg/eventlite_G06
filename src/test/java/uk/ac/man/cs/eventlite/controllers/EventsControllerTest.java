@@ -98,7 +98,7 @@ public class EventsControllerTest {
 		
 		when(eventService.findOne(1)).thenReturn(event);
 
-		mvc.perform(get("/events/1").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
+		mvc.perform(MockMvcRequestBuilders.get("/events/1").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
 		.andExpect(view().name("events/event")).andExpect(handler().methodName("getEvent"));
 
 		verify(eventService).findOne(1);
@@ -110,6 +110,18 @@ public class EventsControllerTest {
 		mvc.perform(MockMvcRequestBuilders.get("/events/search")
 				.accept(MediaType.TEXT_HTML))
 		.andExpect(status().isOk()).andExpect(view().name("events/search"));
+	}
+	
+	@Test
+	public void removeEvent() throws Exception {
+		
+		Event event1 = new Event();
+		eventService.save(event1);
+		when(eventService.findOne(0)).thenReturn(event1);
+		mvc.perform(MockMvcRequestBuilders.get("/events/delete/0").accept(MediaType.TEXT_HTML)).andExpect(status().isFound())
+		.andExpect(view().name("redirect:/events")).andExpect(handler().methodName("deleteEvent"));
+		verify(eventService).delete(0);
+		verifyZeroInteractions(event);
 	}
 	
 	@Test
