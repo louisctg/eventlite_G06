@@ -169,6 +169,8 @@ public class EventServiceImpl implements EventService {
   {
 	List<Event> incomingEvents = new ArrayList<Event>();
 	for(Event event: events) {
+		// System.out.println("event:"+ event);
+		if(event.getOrganiser() != null)
 		if(event.getOrganiser().equals(organiserName))
 			incomingEvents.add(event);
 	}
@@ -179,6 +181,7 @@ public class EventServiceImpl implements EventService {
   {
 		List<Event> incomingEvents = new ArrayList<Event>();
 		for(Event event: events) {
+			if(event.getOrganiser() != null)
 			if(event.getOrganiser().equals(organiserName))
 				incomingEvents.add(event);
 		}
