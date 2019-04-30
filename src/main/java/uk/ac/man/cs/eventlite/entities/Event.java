@@ -45,6 +45,7 @@ public class Event {
 	@NotNull(message = "Please select one")
 	private Venue venue;
 	
+	private String organiser;
 	// NOTE: SQL has limit of 255
 	@Size(max = 500, message = "The event must have 500 characters or less.")
 	private String description;
@@ -100,4 +101,12 @@ public class Event {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	public String getOrganiser() {
+		return organiser;
+	}
+	
+	public void setOrganiser(String organiser) {
+		this.organiser = organiser;
+	}
+
 }
