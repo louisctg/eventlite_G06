@@ -1,19 +1,25 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-   	<head>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/default}">
+  
+  <head>
     <title>Hello Twitter</title>
   </head>
+  
   <body>
-    <h3>Connect to Twitter</h3>
-
-    <form action="/connect/twitter" method="POST">
-      <div class="formInfo">
-        <p>You aren't connected to Twitter yet. Click the button to connect Spring Social Showcase with your Twitter account.</p>
-      </div>
-      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-      <p><button type="submit">Connect to Twitter</button></p>
-    </form>
+  
+    <div layout:fragment="content">
+  
+	    <h3>Connect to Twitter</h3>
+	
+	    <form action="/connect/twitter" method="POST">
+	      <div class="formInfo">
+	        <p>You aren't connected to Twitter yet. Click the button to connect Spring Social Showcase with your Twitter account.</p>
+	      </div>
+	      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+	      <button type="submit" class="btn btn-primary text-white"><i class="fa fa-twitter" aria-hidden="true"></i> Connect to Twitter</button>
+	    </form>
+	    
+    </div>
   </body>
 </html>
