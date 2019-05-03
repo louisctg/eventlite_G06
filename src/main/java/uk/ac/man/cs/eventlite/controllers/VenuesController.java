@@ -60,7 +60,7 @@ public class VenuesController {
 //			model.addAttribute("venues",venueService.findAll());
 			return "venues/new";
 		}
-
+		venue.setCoordinates(venue.getAddress(), venue.getPostcode());
 		venueService.save(venue);
 		redirectAttrs.addFlashAttribute("ok_message", "New venue added.");
 
