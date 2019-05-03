@@ -45,7 +45,7 @@ public class Event {
 	@NotNull(message = "Please select one")
 	private Venue venue;
 	
-	private String organiser;
+	private String organiser = null;
 	// NOTE: SQL has limit of 255
 	@Size(max = 500, message = "The event must have 500 characters or less.")
 	private String description;
