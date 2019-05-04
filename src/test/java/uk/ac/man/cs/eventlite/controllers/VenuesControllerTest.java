@@ -105,7 +105,6 @@ public class VenuesControllerTest {
 		mvc.perform(MockMvcRequestBuilders.get("/venues/delete/0").accept(MediaType.TEXT_HTML)).andExpect(status().isFound())
 		.andExpect(view().name("redirect:/venues")).andExpect(handler().methodName("deleteVenue"));
 		verify(venueService).delete(0);
-		verifyZeroInteractions(venue);
 	} 
 
 	@Test
