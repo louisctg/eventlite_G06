@@ -30,6 +30,8 @@ public interface EventService {
 
 	public Iterable<Event> findUpcomingEventsWithVenue(long id);
 	
+	public Iterable<Event> findNext3UpcomingEventsWithVenue(long id);
+	
 	public Iterable<Event> futureEventsOrganiser(Iterable<Event> events, String organiserName);
 	public Iterable<Event> pastEventsOrganiser(Iterable<Event> events, String organiserName);
 }

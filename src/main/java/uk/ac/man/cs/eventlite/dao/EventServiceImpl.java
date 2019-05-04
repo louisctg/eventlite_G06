@@ -157,6 +157,18 @@ public class EventServiceImpl implements EventService {
 		
 		return incomingEvents;
 	}
+	
+	public Iterable<Event> findNext3UpcomingEventsWithVenue(long id){
+		Iterable<Event> incomingEvents = eventRepository.findByVenueId(id);
+		List<Event> next3Events = new ArrayList<Event>();
+		
+		for(Event event: incomingEvents) {
+			if(next3Events.size()  < 3)
+				next3Events.add(event);
+		}
+		
+		return next3Events;
+	}
 
   @Override
   public Iterable<Event> findUpcomingEventsWithVenue(long id) {

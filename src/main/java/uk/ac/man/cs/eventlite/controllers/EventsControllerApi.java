@@ -40,13 +40,14 @@ public class EventsControllerApi {
 		return eventToResource(event);
 	}
 
+	
 	private Resource<Event> eventToResource(Event event) {
 		Link selfLink = linkTo(EventsControllerApi.class).slash(event.getId()).withSelfRel();
 		Link venueLink = linkTo(EventsControllerApi.class).slash(event.getId()).slash("venue").withRel("venue");
 		return new Resource<Event>(event, selfLink,venueLink);
 	}
 
-	private Resources<Resource<Event>> eventToResource(Iterable<Event> events) {
+	public Resources<Resource<Event>> eventToResource(Iterable<Event> events) {
 		Link selfLink = linkTo(methodOn(EventsControllerApi.class).getAllEvents()).withSelfRel();
 
 		List<Resource<Event>> resources = new ArrayList<Resource<Event>>();

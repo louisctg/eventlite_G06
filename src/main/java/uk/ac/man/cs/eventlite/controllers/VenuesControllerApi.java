@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueService;
+import uk.ac.man.cs.eventlite.entities.Event;
 import uk.ac.man.cs.eventlite.entities.Venue;
 
 @RestController
@@ -26,6 +28,12 @@ public class VenuesControllerApi {
 
 	@Autowired
 	private VenueService venueService;
+	
+	@Autowired
+	private EventService eventService;
+	
+	@Autowired
+	private EventsControllerApi eventController;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public Resources<Resource<Venue>> getAllVenues() {
@@ -39,21 +47,29 @@ public class VenuesControllerApi {
 		
 		return venueToResource(venue);
 	}
+	
+	@RequestMapping(value = "/{id}/next3events", method = RequestMethod.GET)
+	public Resources<Resource<Event>> nextThreeEvents(@PathVariable("id") long id){
+		Iterable<Event> events = eventService.findNext3UpcomingEventsWithVenue(id);
+		
+		return eventController.eventToResource(events);
+	}
 
 	private Resource<Venue> venueToResource(Venue venue) {
 		Link selfLink = linkTo(VenuesControllerApi.class).slash(venue.getId()).withSelfRel();
-
-		return new Resource<Venue>(venue, selfLink);
+		Link eventLink = linkTo(VenuesControllerApi.class).slash(venue.getId()).slash("events").withRel("events");
+		Link next3eventLink = linkTo(VenuesControllerApi.class).slash(venue.getId()).slash("next3events").withRel("next3events");
+		return new Resource<Venue>(venue, selfLink,eventLink,next3eventLink);
 	}
 
 	private Resources<Resource<Venue>> venueToResource(Iterable<Venue> venues) {
 		Link selfLink = linkTo(methodOn(VenuesControllerApi.class).getAllVenues()).withSelfRel();
-
+		Link profileLink = linkTo(methodOn(HomeControllerApi.class).getAllHomeLinks()).slash("profile").slash("venues").withRel("venues");
 		List<Resource<Venue>> resources = new ArrayList<Resource<Venue>>();
 		for (Venue venue : venues) {
 			resources.add(venueToResource(venue));
 		}
 
-		return new Resources<Resource<Venue>>(resources, selfLink);
+		return new Resources<Resource<Venue>>(resources, selfLink, profileLink);
 	}
 }
