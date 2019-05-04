@@ -21,7 +21,7 @@ public class HomeControllerApi {
 	public Resource<Home> getAllHomeLinks(){
 		Link profileLink = linkTo(methodOn(HomeControllerApi.class).getAllHomeLinks()).slash("profile").withRel("profile");
 		Link eventsLink = linkTo(EventsControllerApi.class).withRel("events");
-		Link venuesLink = linkTo(EventsControllerApi.class).withRel("venues");
+		Link venuesLink = linkTo(VenuesControllerApi.class).withRel("venues");
 		
 		return new Resource<Home>(new Home(), venuesLink, eventsLink, profileLink);
 	}
