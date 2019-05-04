@@ -56,6 +56,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		alpha.setDate(cal.getTime());
 		alpha.setTime(cal.getTime());
 		alpha.setVenue(venue2);
+		alpha.setOrganiser("Caroline");
 		
 		eventService.save(alpha);
 		
@@ -66,6 +67,8 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		beta.setDate(cal.getTime());
 		beta.setTime(cal.getTime());
 		beta.setVenue(venue1);
+		beta.setOrganiser("Rob");
+
 		
 		eventService.save(beta);
 		
@@ -76,6 +79,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		apple.setDate(cal.getTime());
 		apple.setTime(cal.getTime());
 		apple.setVenue(venueA);
+		apple.setOrganiser("Markel");
 		
 		eventService.save(apple);
 		
@@ -86,6 +90,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		former.setDate(cal.getTime());
 		former.setTime(cal.getTime());
 		former.setVenue(venue2);
+		former.setOrganiser("Caroline");
 		
 		eventService.save(former);
 		
@@ -96,6 +101,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		previous.setDate(cal.getTime());
 		previous.setTime(cal.getTime());
 		previous.setVenue(venue1);
+		previous.setOrganiser("Rob");
 		
 		eventService.save(previous);
 		
@@ -106,6 +112,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		past.setDate(cal.getTime());
 		past.setTime(cal.getTime());
 		past.setVenue(venue1);
+		past.setOrganiser("Markel");
 		
 		eventService.save(past);
 	}
