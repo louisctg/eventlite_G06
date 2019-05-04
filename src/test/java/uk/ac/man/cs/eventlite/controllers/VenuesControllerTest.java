@@ -140,7 +140,7 @@ public class VenuesControllerTest {
 		when(venueService.findOne(0)).thenReturn(venue1);
 		mvc.perform(MockMvcRequestBuilders.put("/venues/0").with(user("Rob").roles(Security.ADMIN_ROLE))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-				.param("id", "1").param("name", "test").param("roadname", "test").param("postcode", "M13 9PL").param("capacity", "1")
+				.param("id", "0").param("name", "test").param("roadname", "test").param("postcode", "M13 9PL").param("capacity", "1")
 				.accept(MediaType.TEXT_HTML).with(csrf()))
 		.andExpect(status().isFound()).andExpect(content().string(""))
 		.andExpect(view().name("redirect:/venues")).andExpect(model().hasNoErrors())
