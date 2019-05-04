@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +31,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import uk.ac.man.cs.eventlite.EventLite;
+import uk.ac.man.cs.eventlite.dao.EventService;
+import uk.ac.man.cs.eventlite.entities.Event;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = EventLite.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -41,6 +44,8 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 
 	@Autowired
 	private TestRestTemplate template;
+	@Autowired
+	private EventService eventService;
 
 	@Before
 	public void setup() {
@@ -96,7 +101,15 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 		assertThat(loginResponse.getStatusCode(), equalTo(HttpStatus.FOUND));
 		
 		// Check the Delete controller
-		response = template.exchange("http://localhost:8080/events/delete/5", HttpMethod.GET, postBody, String.class);
+		//getId
+		int eventId = 0;
+		List<Event> events = (List<Event>) eventService.findAll();
+		if(events.size() > 0)
+		{
+			eventId = (int) events.get(0).getId();
+		}
+		
+		response = template.exchange("http://localhost:8080/events/delete/" + eventId, HttpMethod.GET, postBody, String.class);
 		assertThat(response.getStatusCode(), equalTo(HttpStatus.FOUND));
 		
 	}
