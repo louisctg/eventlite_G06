@@ -61,6 +61,7 @@ layout:decorate="~{layouts/default}">
     </table>
 
 	<div class="alert alert-success" role="alert" th:if="${message}" th:text="${message}"></div>
+	<div class="alert alert-danger" role="alert" th:if="${error}" th:text="${error}"></div>
 
 	<div class="card text-white bg-primary mb-3" style="max-width: 100%;">
   		<div class="card-header">Share the event!</div>

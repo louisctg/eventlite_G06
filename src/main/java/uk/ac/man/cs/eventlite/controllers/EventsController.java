@@ -176,9 +176,16 @@ public class EventsController {
 		Event event = eventService.findOne(id);
 		tweet += "\n" + event.getName() + " #eventlite #g06 #SoftEng #UoM";
 		
-		twitter.timelineOperations().updateStatus(tweet);
+		try
+		{
+			twitter.timelineOperations().updateStatus(tweet);
+			attributes.addFlashAttribute("message", "Your tweet: " + tweet + " was posted");
+		}
+		catch(Exception e)
+		{
+			attributes.addFlashAttribute("error", "Something went wrong: " + e.getMessage());
+		}
 		
-		attributes.addFlashAttribute("message", "Your tweet: " + tweet + " was posted");
 		return "redirect:/events/" + id;
 	}
 	
