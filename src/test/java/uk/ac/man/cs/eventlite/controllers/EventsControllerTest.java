@@ -19,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.Collections;
+import java.util.Date;
 
 import javax.servlet.Filter;
 
@@ -39,6 +40,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 //import hello.entities.Greeting;
 import uk.ac.man.cs.eventlite.EventLite;
@@ -166,4 +169,28 @@ public class EventsControllerTest {
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED));
 
 	}
+	
+	@Test
+	public void updateEvent() throws Exception {
+		Event event1 = new Event();
+		eventService.save(event1);
+		when(eventService.findOne(0)).thenReturn(event1);
+		mvc.perform(MockMvcRequestBuilders.put("/events/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("id", "0").param("name", "test").param("date", "2020-01-01").param("venue.name", "venue1")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isFound()).andExpect(content().string(""))
+		.andExpect(view().name("redirect:/events")).andExpect(model().hasNoErrors())
+		.andExpect(handler().methodName("updateEvent")).andExpect(flash().attributeExists("ok_message"));
+
+	}
+	public static String toJSONString(final Object obj) {
+	    try {
+	        final ObjectMapper mapper = new ObjectMapper();
+	        final String jsonContent = mapper.writeValueAsString(obj);
+	        return jsonContent;
+	    } catch (Exception e) {
+	        throw new RuntimeException(e);
+	    }
+	} 
 }
