@@ -1,5 +1,6 @@
 package uk.ac.man.cs.eventlite.controllers;
 
+import javax.inject.Inject;
 import javax.validation.Valid;
 
 import java.security.Principal;
@@ -8,6 +9,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.social.connect.ConnectionRepository;
+import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,6 +36,15 @@ public class EventsController {
 
 	@Autowired
 	private VenueService venueService;
+	
+	private Twitter twitter;
+	private ConnectionRepository connectionRepository;
+	
+	@Inject
+	public EventsController(Twitter twitter, ConnectionRepository connectionRepository) {
+		this.twitter = twitter;
+		this.connectionRepository = connectionRepository;
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String getAllEvents(Model model, Principal principal) {
@@ -152,6 +164,22 @@ public class EventsController {
 		model.addAttribute("past_events", eventService.searchPastEventsOrderedByNameAndDateDescending(key));
 
 		return "events/result";
+	}
+	
+	@RequestMapping(value = "/{id}/tweet", method = RequestMethod.POST)
+	public String tweetEvent(@PathVariable long id, @RequestParam(value = "tweet", required = true) String tweet, Model model, RedirectAttributes attributes)
+	{
+		if (!twitter.isAuthorized()) {
+            return "redirect:/connect/twitter";
+        }
+		
+		Event event = eventService.findOne(id);
+		tweet += "\n" + event.getName() + " #eventlite #g06 #SoftEng #UoM";
+		
+		twitter.timelineOperations().updateStatus(tweet);
+		
+		attributes.addFlashAttribute("message", "Your tweet: " + tweet + " was posted");
+		return "redirect:/events/" + id;
 	}
 	
 }
