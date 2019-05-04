@@ -163,10 +163,17 @@ public class EventsControllerTest {
 	
 	@Test
 	public void postEvent() throws Exception {
-		ArgumentCaptor<Event> arg = ArgumentCaptor.forClass(Event.class);
-
-		mvc.perform(MockMvcRequestBuilders.put("/events").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED));
+		//ArgumentCaptor<Event> arg = ArgumentCaptor.forClass(Event.class);
+		Event event1 = new Event();
+		eventService.save(event1);
+		when(eventService.findOne(0)).thenReturn(event1);
+		mvc.perform(MockMvcRequestBuilders.post("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("id", "0").param("name", "test").param("date", "2020-01-01").param("venue.name", "venue1")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+				.andExpect(status().isFound()).andExpect(content().string(""))
+				.andExpect(view().name("redirect:/events")).andExpect(model().hasNoErrors())
+				.andExpect(handler().methodName("createEvent")).andExpect(flash().attributeExists("ok_message"));
 
 	}
 	
