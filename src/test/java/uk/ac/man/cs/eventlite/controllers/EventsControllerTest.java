@@ -184,13 +184,4 @@ public class EventsControllerTest {
 		.andExpect(handler().methodName("updateEvent")).andExpect(flash().attributeExists("ok_message"));
 
 	}
-	public static String toJSONString(final Object obj) {
-	    try {
-	        final ObjectMapper mapper = new ObjectMapper();
-	        final String jsonContent = mapper.writeValueAsString(obj);
-	        return jsonContent;
-	    } catch (Exception e) {
-	        throw new RuntimeException(e);
-	    }
-	} 
 }
