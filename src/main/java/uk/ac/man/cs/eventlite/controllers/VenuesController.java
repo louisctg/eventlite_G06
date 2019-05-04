@@ -57,7 +57,6 @@ public class VenuesController {
 		if (errors.hasErrors()) {
 			
 			model.addAttribute("venue", venue);
-//			model.addAttribute("venues",venueService.findAll());
 			return "venues/new";
 		}
 		venue.setCoordinates(venue.getAddress(), venue.getPostcode());
