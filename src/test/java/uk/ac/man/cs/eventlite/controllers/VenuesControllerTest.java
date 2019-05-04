@@ -46,6 +46,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import uk.ac.man.cs.eventlite.EventLite;
 import uk.ac.man.cs.eventlite.config.Security;
+import uk.ac.man.cs.eventlite.dao.EventService;
 import uk.ac.man.cs.eventlite.dao.VenueRepository;
 import uk.ac.man.cs.eventlite.dao.VenueService;
 import uk.ac.man.cs.eventlite.entities.Event;
@@ -65,9 +66,12 @@ public class VenuesControllerTest {
 
 	@Mock
 	private Venue venue;
-
+	
 	@Mock
 	private VenueService venueService;
+
+	@Mock
+	private EventService eventService;
 
 	@InjectMocks
 	private VenuesController venuesController;
@@ -128,5 +132,20 @@ public class VenuesControllerTest {
 		
 		verify(venueService).searchVenuesOrderedByNameAscending("Venue");
 		verifyZeroInteractions(venue);
+	}
+	
+	@Test
+	public void updateVenue() throws Exception {
+		Venue venue1 = new Venue();
+		venueService.save(venue1);
+		when(venueService.findOne(0)).thenReturn(venue1);
+		mvc.perform(MockMvcRequestBuilders.put("/venues/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("id", "1").param("name", "test").param("roadname", "test").param("postcode", "M13 9PL").param("capacity", "1")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isFound()).andExpect(content().string(""))
+		.andExpect(view().name("redirect:/venues")).andExpect(model().hasNoErrors())
+		.andExpect(handler().methodName("updateVenue")).andExpect(flash().attributeExists("ok_message"));
+
 	}
 }
