@@ -125,10 +125,23 @@ public class VenuesController {
 	}
 	
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-	public String deleteVenue(@PathVariable("id") long id)
+	public String deleteVenue(@PathVariable("id") long id, RedirectAttributes attributes)
 	{
 		try{
-			venueService.delete(id);
+			
+			// Get the event list of the venue
+			Iterable<Event> events = eventService.findUpcomingEventsWithVenue(id);
+			
+			
+			if(events.equals(null))
+			{
+				venueService.delete(id);
+			}
+			else
+			{
+				attributes.addFlashAttribute("message", "This venue has other upcoming events. You shouldn't remove this!");
+			}
+			
 			
 		} catch (Exception e)
 		{
