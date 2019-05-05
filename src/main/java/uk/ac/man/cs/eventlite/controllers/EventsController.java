@@ -1,11 +1,14 @@
 package uk.ac.man.cs.eventlite.controllers;
 
+import javax.inject.Inject;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.social.connect.ConnectionRepository;
+import org.springframework.social.twitter.api.Tweet;
+import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,6 +29,9 @@ import uk.ac.man.cs.eventlite.entities.Event;
 @RequestMapping(value = "/events", produces = { MediaType.TEXT_HTML_VALUE })
 public class EventsController {
 
+	private Twitter twitter;
+	private ConnectionRepository connectionRepository;
+	
 	@Autowired
 	private EventService eventService;
 
@@ -38,6 +44,10 @@ public class EventsController {
 		//model.addAttribute("events", eventService.findAll());
 		model.addAttribute("future_events", eventService.findFutureEventsOrderedByNameAndDate());
 		model.addAttribute("past_events", eventService.findPastEventsOrderedByNameAndDate());
+		
+        List<Tweet> tweets = twitter.timelineOperations().getHomeTimeline().subList(0, 5);
+        model.addAttribute("tweets", tweets);
+		
 		return "events/index";
 	}
 	
@@ -46,6 +56,7 @@ public class EventsController {
 			@RequestParam(value = "name", required = false, defaultValue = "Testing") String name, Model model) {
 		Event event = eventService.findOne(id);
 		model.addAttribute("event", event);
+       
 		return "events/event";
 	}
 
@@ -79,6 +90,7 @@ public class EventsController {
 			model.addAttribute("time", event.getTime());
 			
 			model.addAttribute("venues", venueService.findAll());
+			
 			return "events/new";
 		}
 		
@@ -133,5 +145,12 @@ public class EventsController {
 
 		return "events/result";
 	}
+	
+	@Inject
+	public EventsController(Twitter twitter, ConnectionRepository connectionRepository) {
+		this.twitter = twitter;
+		this.connectionRepository = connectionRepository;
+	}
+	
 	
 }
