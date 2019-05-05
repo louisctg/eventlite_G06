@@ -67,7 +67,15 @@ public class EventsController {
 		model.addAttribute("future_events", futureEvents);
 		model.addAttribute("past_events", pastEvents);
 		}
-
+		
+		if (!twitter.isAuthorized()) {
+            return "redirect:/connect/twitter";
+        }
+		
+		//Get latest five tweets from eventlite profile
+		List<Tweet> tweets = twitter.timelineOperations().getUserTimeline("EventLiteG06_19").subList(0, 5);
+		
+        model.addAttribute("tweets", tweets);
 
 		return "events/index";
 	}
