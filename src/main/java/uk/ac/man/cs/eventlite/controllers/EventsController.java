@@ -45,7 +45,8 @@ public class EventsController {
 		model.addAttribute("future_events", eventService.findFutureEventsOrderedByNameAndDate());
 		model.addAttribute("past_events", eventService.findPastEventsOrderedByNameAndDate());
 		
-        List<Tweet> tweets = twitter.timelineOperations().getHomeTimeline().subList(0, 5);
+		List<Tweet> tweets = twitter.timelineOperations().getUserTimeline("EventLiteG06_19").subList(0, 5);
+		
         model.addAttribute("tweets", tweets);
 		
 		return "events/index";
