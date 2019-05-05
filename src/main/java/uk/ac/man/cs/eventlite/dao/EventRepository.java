@@ -17,25 +17,25 @@ public interface EventRepository extends CrudRepository<Event, Long>{
 	
 	Iterable<Event> findByDateAfterOrderByDateAscTimeAsc(Date date);
 	
-	// used for previous events
-	Iterable<Event> findByDateAfterOrderByDateAscTimeAscNameAsc(Date date);
+	// used for future events on events index page
+	Iterable<Event> findByDateAfterOrderByDateAscNameAsc(Date date); // after today
+	Iterable<Event> findByDateEqualsAndTimeGreaterThanEqualOrderByDateAscNameAsc(Date date, Date time); // today, after current time
 	
-	Iterable<Event> findByDateEqualsAndTimeGreaterThanEqualOrderByDateAscTimeAscNameAsc(Date date, Date time);
-	// used for future events
-	Iterable<Event> findByDateBeforeOrderByDateDescTimeDescNameAsc(Date date);
-	
-	Iterable<Event> findByDateEqualsAndTimeLessThanOrderByDateDescTimeDescNameAsc(Date date, Date time);
+	// used for previous events on events index page
+	Iterable<Event> findByDateBeforeOrderByDateDescNameAsc(Date date); // before today
+	Iterable<Event> findByDateEqualsAndTimeLessThanOrderByDateDescNameAsc(Date date, Date time); // today, before current time
 
-	Iterable<Event> findByNameContainingIgnoreCaseAndDateAfterOrderByDateAscTimeAscNameAsc(String name, Date date);
-	Iterable<Event> findByNameContainingIgnoreCaseAndDateEqualsAndTimeGreaterThanEqualOrderByDateAscTimeAscNameAsc(String name, Date date, Date time);
+	// used for future events on events search page
+	Iterable<Event> findByNameContainingIgnoreCaseAndDateAfterOrderByDateAscNameAsc(String name, Date date); // after today
+	Iterable<Event> findByNameContainingIgnoreCaseAndDateEqualsAndTimeGreaterThanEqualOrderByDateAscNameAsc(String name, Date date, Date time); // today, after current time
 	
-	Iterable<Event> findByNameContainingIgnoreCaseAndDateBeforeOrderByDateDescTimeDescNameAsc(String name, Date date);
-	Iterable<Event> findByNameContainingIgnoreCaseAndDateEqualsAndTimeLessThanOrderByDateDescTimeDescNameAsc(String name, Date date, Date time);
+	// used for previous evnets on events search page
+	Iterable<Event> findByNameContainingIgnoreCaseAndDateBeforeOrderByDateDescNameAsc(String name, Date date); // before today
+	Iterable<Event> findByNameContainingIgnoreCaseAndDateEqualsAndTimeLessThanOrderByDateDescNameAsc(String name, Date date, Date time); // today, before current time
 	
 	// used for next 3 incoming events
-	Iterable<Event> findTop3ByDateAfterOrderByDateAscNameAsc(Date date);
-	
-	Iterable<Event> findTop3ByDateEqualsAndTimeAfterOrderByDateAscNameAsc(Date date, Date time);
+	Iterable<Event> findTop3ByDateAfterOrderByDateAscNameAsc(Date date); // after today
+	Iterable<Event> findTop3ByDateEqualsAndTimeAfterOrderByDateAscNameAsc(Date date, Date time); // today, after current time
 
 	// used for upcoming events of the particular venue
 	Iterable<Event> findByVenueId(long venueId);

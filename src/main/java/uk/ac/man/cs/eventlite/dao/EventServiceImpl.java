@@ -72,8 +72,8 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public Iterable<Event> findFutureEventsOrderedByNameAndDate() {
-		Iterable<Event> eventsAfterToday =   eventRepository.findByDateAfterOrderByDateAscTimeAscNameAsc(new Date());
-		Iterable<Event> eventsToday =   eventRepository.findByDateEqualsAndTimeGreaterThanEqualOrderByDateAscTimeAscNameAsc(new Date(), new Date());
+		Iterable<Event> eventsAfterToday =   eventRepository.findByDateAfterOrderByDateAscNameAsc(new Date());
+		Iterable<Event> eventsToday =   eventRepository.findByDateEqualsAndTimeGreaterThanEqualOrderByDateAscNameAsc(new Date(), new Date());
 		
 		List<Event> futureEvents = new ArrayList<Event>();
 		for(Event event: eventsToday) {
@@ -88,14 +88,14 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public Iterable<Event> findPastEventsOrderedByNameAndDate() {
-		Iterable<Event> eventsBeforeToday =   eventRepository.findByDateBeforeOrderByDateDescTimeDescNameAsc(new Date());
-		Iterable<Event> eventsToday =   eventRepository.findByDateEqualsAndTimeLessThanOrderByDateDescTimeDescNameAsc(new Date(), new Date());
+		Iterable<Event> eventsBeforeToday =   eventRepository.findByDateBeforeOrderByDateDescNameAsc(new Date());
+		Iterable<Event> eventsToday =   eventRepository.findByDateEqualsAndTimeLessThanOrderByDateDescNameAsc(new Date(), new Date());
 		
 		List<Event> pastEvents = new ArrayList<Event>();
-		for(Event event: eventsBeforeToday) {
+		for(Event event: eventsToday) {
 			pastEvents.add(event);
 		}
-		for(Event event: eventsToday) {
+		for(Event event: eventsBeforeToday) {
 			pastEvents.add(event);
 		}
 		
@@ -104,8 +104,8 @@ public class EventServiceImpl implements EventService {
 	
 	@Override
 	public Iterable<Event> searchFutureEventsOrderedByNameAndDateAscending(String name) {
-		Iterable<Event> eventsAfterToday =  eventRepository.findByNameContainingIgnoreCaseAndDateAfterOrderByDateAscTimeAscNameAsc(name, new Date());
-		Iterable<Event> todayEvents = eventRepository.findByNameContainingIgnoreCaseAndDateEqualsAndTimeGreaterThanEqualOrderByDateAscTimeAscNameAsc(name, new Date(), new Date());
+		Iterable<Event> eventsAfterToday =  eventRepository.findByNameContainingIgnoreCaseAndDateAfterOrderByDateAscNameAsc(name, new Date());
+		Iterable<Event> todayEvents = eventRepository.findByNameContainingIgnoreCaseAndDateEqualsAndTimeGreaterThanEqualOrderByDateAscNameAsc(name, new Date(), new Date());
 		
 		List<Event> futureEvents = new ArrayList<Event>();
 		
@@ -122,8 +122,8 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public Iterable<Event> searchPastEventsOrderedByNameAndDateDescending(String name) {
-		Iterable<Event> eventsBeforeToday =  eventRepository.findByNameContainingIgnoreCaseAndDateBeforeOrderByDateDescTimeDescNameAsc(name, new Date());
-		Iterable<Event> todayEvents = eventRepository.findByNameContainingIgnoreCaseAndDateEqualsAndTimeLessThanOrderByDateDescTimeDescNameAsc(name, new Date(), new Date());
+		Iterable<Event> eventsBeforeToday =  eventRepository.findByNameContainingIgnoreCaseAndDateBeforeOrderByDateDescNameAsc(name, new Date());
+		Iterable<Event> todayEvents = eventRepository.findByNameContainingIgnoreCaseAndDateEqualsAndTimeLessThanOrderByDateDescNameAsc(name, new Date(), new Date());
 		
 		List<Event> pastEvents = new ArrayList<Event>();
 		
@@ -172,9 +172,20 @@ public class EventServiceImpl implements EventService {
 
   @Override
   public Iterable<Event> findUpcomingEventsWithVenue(long id) {
-    Iterable<Event> incomingEvents = eventRepository.findByVenueId(id);
-
-    return incomingEvents;
+	  Iterable<Event> eventsAfterToday = eventRepository.findByDateAfterOrderByDateAscNameAsc(new Date());
+		Iterable<Event> eventsToday = eventRepository.findByDateEqualsAndTimeGreaterThanEqualOrderByDateAscNameAsc(new Date(), new Date());
+		
+		List<Event> futureEvents = new ArrayList<Event>();
+		for(Event event: eventsToday) {
+			if(event.getVenue().getId() == id)
+				futureEvents.add(event);
+		}
+		for(Event event: eventsAfterToday) {
+			if(event.getVenue().getId() == id)
+				futureEvents.add(event);
+		}
+		
+		return futureEvents;
   }
   @Override
   public Iterable<Event> futureEventsOrganiser(Iterable<Event> events, String organiserName)

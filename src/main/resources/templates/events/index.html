@@ -17,8 +17,8 @@ body { margin:0; padding:0; }
 <body>
   <div layout:fragment="content">
     <h1>All events</h1>
-	<h3>Upcoming events</h3>
-    <table class="table table-striped table-hover">
+	<h3 th:if="${(#authorization.expression('hasRole(''ADMINISTRATOR'')') && not #lists.isEmpty(future_events_organiser)) || (not #authorization.expression('hasRole(''ADMINISTRATOR'')') && not #lists.isEmpty(future_events))}">Upcoming events</h3>
+    <table class="table table-striped table-hover" th:if="${(#authorization.expression('hasRole(''ADMINISTRATOR'')') && not #lists.isEmpty(future_events_organiser)) || (not #authorization.expression('hasRole(''ADMINISTRATOR'')') && not #lists.isEmpty(future_events))}">
       <thead>
         <tr>
         
@@ -62,8 +62,8 @@ body { margin:0; padding:0; }
     </table>
     
     
-    <h3>Previous events</h3>
-    <table class="table table-striped table-hover">
+    <h3 th:if="${not #lists.isEmpty(past_events)}">Previous events</h3>
+    <table class="table table-striped table-hover" th:if="${not #lists.isEmpty(past_events)}">
       <thead>
         <tr>
         

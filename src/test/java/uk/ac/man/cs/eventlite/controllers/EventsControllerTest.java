@@ -110,7 +110,7 @@ public class EventsControllerTest {
 	}
 	
 	@Test
-	public void getIndexEvent() throws Exception {
+	public void getEvent() throws Exception {
 		
 		when(eventService.findOne(1)).thenReturn(event);
 
@@ -123,9 +123,21 @@ public class EventsControllerTest {
 	
 	@Test
 	public void linkToSearchEvent() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/search")
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/search"));
+		mvc.perform(MockMvcRequestBuilders.get("/events/search").accept(MediaType.TEXT_HTML))
+				.andExpect(status().isOk())
+				.andExpect(view().name("events/search"));
+	}
+	
+	@Test
+	public void searchEvent() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/events/result?key=Event").accept(MediaType.TEXT_HTML))
+					.andExpect(status().isOk())
+					.andExpect(view().name("events/result"))
+					.andExpect(handler().methodName("searchByKey"));
+		
+		verify(eventService).searchFutureEventsOrderedByNameAndDateAscending("Event");
+		verify(eventService).searchPastEventsOrderedByNameAndDateDescending("Event");
+		verifyZeroInteractions(event);
 	}
 	
 	@Test
@@ -139,20 +151,7 @@ public class EventsControllerTest {
 		verify(eventService).delete(0);
 		verifyZeroInteractions(event);
 	}
-	
-	@Test
-	public void searchEvent() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/result?key=Event")
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/result"))
-		.andExpect(handler().methodName("searchByKey"));
-		
-		verify(eventService).searchFutureEventsOrderedByNameAndDateAscending("Event");
-		verify(eventService).searchPastEventsOrderedByNameAndDateDescending("Event");
-		verifyZeroInteractions(event);
-	}
 
-	
 	@Test
 	public void createNewEvent() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))

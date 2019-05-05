@@ -58,9 +58,9 @@ public class EventsController {
 		Iterable<Event> pastEventsOrganiser  =  eventService.pastEventsOrganiser(pastEvents, principal.getName());
 		model.addAttribute("future_events_organiser", futureEventsOrganiser);
 		model.addAttribute("past_events_organiser", pastEventsOrganiser);
-		model.addAttribute("future_events", futureEvents);
-		//the following line will be useful for the Show the location of one specific event on a map
-		model.addAttribute("past_events", pastEvents);
+			model.addAttribute("future_events", futureEvents);
+			//the following line will be useful for the Show the location of one specific event on a map
+			model.addAttribute("past_events", pastEvents);
 		}
 		else
 		{
@@ -89,8 +89,7 @@ public class EventsController {
 	public String newEvent(Model model) {
 		if (!model.containsAttribute("event")) {
 			model.addAttribute("event", new Event());
-			//we need to add the venues so we can extract them 
-			//as references when we want to create a new venue
+			// we need to add the venues to the model so we ue them as references when we want to create a new event in the UI
 			model.addAttribute("venues", venueService.findAll());
 		}
 
@@ -132,7 +131,7 @@ public class EventsController {
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public String updateEvent(@RequestBody @Valid @ModelAttribute Event event, BindingResult errors,  @PathVariable long id, Model model, RedirectAttributes redirAttrs)
+	public String updateEvent(@RequestBody @Valid @ModelAttribute Event event, BindingResult errors,  @PathVariable long id, Model model, RedirectAttributes redirAttrs, Principal principal)
 	{
 		if(errors.hasErrors()) {
 			model.addAttribute("event", event);
@@ -142,6 +141,7 @@ public class EventsController {
 		}
 
 		event.setId(id);
+		event.setOrganiser(principal.getName());
 		eventService.save(event);
 		redirAttrs.addFlashAttribute("ok_message", "Event updated.");
 				

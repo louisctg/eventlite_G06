@@ -1,5 +1,7 @@
 package uk.ac.man.cs.eventlite.controllers;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,15 @@ public class VenuesController {
 		return "venues/index";
 	}
 	
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public String getVenue(@PathVariable("id") long id, Model model) {
+	  Venue venue = venueService.findOne(id);
+	  model.addAttribute("venue", venue);
+	  model.addAttribute("upcoming_events", eventService.findUpcomingEventsWithVenue(id));
+	  
+	  return "venues/venue";
+	}
+	
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String newVenue(Model model) {
 		if (!model.containsAttribute("venues")) {
@@ -49,7 +60,6 @@ public class VenuesController {
 		return "venues/new";
 	}
 	
-
 	@RequestMapping(method = RequestMethod.POST, value="/new", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public String createVenue(@RequestBody @Valid @ModelAttribute(name="venue") Venue venue,
 			BindingResult errors, Model model, RedirectAttributes redirectAttrs) {
@@ -105,35 +115,15 @@ public class VenuesController {
 		return "redirect:/venues";
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public String getVenue(@PathVariable("id") long id,
-	    @RequestParam(value = "name", required = false, defaultValue = "Testing") String name, Model model) {
-	  Venue venue = venueService.findOne(id);
-	  model.addAttribute("venue", venue);
-	  
-	  try
-	  {
-		  Iterable<Event> events = eventService.findUpcomingEventsWithVenue(id);
-
-		  model.addAttribute("events",events);
-	  } catch ( Exception e ) {
-		  e.printStackTrace();
-	  }
-
-
-	  return "venues/venue";
-	}
-	
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
 	public String deleteVenue(@PathVariable("id") long id, RedirectAttributes attributes)
 	{
 		try{
 			
 			// Get the event list of the venue
-			Iterable<Event> events = eventService.findUpcomingEventsWithVenue(id);
+			List<Event> events = (List<Event>) eventService.findUpcomingEventsWithVenue(id);			
 			
-			
-			if(events.equals(null))
+			if(events.size() == 0)
 			{
 				venueService.delete(id);
 			}
