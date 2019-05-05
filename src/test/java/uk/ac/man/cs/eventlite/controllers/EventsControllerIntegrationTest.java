@@ -109,9 +109,215 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 			eventId = (int) events.get(0).getId();
 		}
 		
-		response = template.exchange("http://localhost:8080/events/delete/7" , HttpMethod.GET, postBody, String.class);
+		response = template.exchange("http://localhost:8080/events/delete/7", HttpMethod.GET, postBody, String.class);
 		assertThat(response.getStatusCode(), equalTo(HttpStatus.FOUND));
 		
 	}
+//	@Test
+//	public void testDeleteEventNoAuthenticated() {	
+//		// Enable cookie in the template
+//		template = new TestRestTemplate(HttpClientOption.ENABLE_COOKIES);
+//		
+//		// Create a new post header
+//		HttpHeaders postMethod = new HttpHeaders();
+//		postMethod.setAccept(Collections.singletonList(MediaType.TEXT_HTML));
+//		postMethod.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//
+//		// Set the get header
+//		httpEntity = new HttpEntity<>(postMethod);
+//		ResponseEntity<String> response = template.exchange("http://localhost:8080/sign-in", HttpMethod.GET, httpEntity, String.class);
+//		
+//		// Check the status
+//		assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+//		
+//		// Check CSRF token
+//		String responseBody = response.getBody();
+//		Pattern p = Pattern.compile("(?s).*name=\"_csrf\".*?value=\"([^\"]+).*");
+//		Matcher m = p.matcher(responseBody);
+//
+//		// Check the pattern of the CSRF token 
+//		assertThat(m.matches(), equalTo(true));
+//		
+//		// Get the CSRF token
+//		String token = m.group(1);
+//
+//		MultiValueMap<String, String> loginDetail = new LinkedMultiValueMap<String,String>();
+//		loginDetail.add("_csrf", token);
+//		loginDetail.add("username", "NoUser");
+//		loginDetail.add("password", "NoPass");
+//		
+//		// Check the authentication 
+//		HttpEntity<MultiValueMap<String, String>> postBody = new HttpEntity<MultiValueMap<String,String>>(loginDetail,postMethod); 
+//		ResponseEntity<String> loginResponse = template.exchange("http://localhost:8080/sign-in", HttpMethod.POST, postBody, String.class);
+//		assertThat(loginResponse.getStatusCode(), equalTo(HttpStatus.MOVED_PERMANENTLY));
+//		
+////		// Check the Delete controller
+////		//getId
+////		int eventId = 0;
+////		List<Event> events = (List<Event>) eventService.findAll();
+////		if(events.size() > 0)
+////		{
+////			eventId = (int) events.get(0).getId();
+////		}
+////		
+////		response = template.exchange("http://localhost:8080/events/delete/71", HttpMethod.GET, postBody, String.class);
+////		assertThat(response.getStatusCode(), equalTo(HttpStatus.FOUND));
+//		
+//	}
+	
+	
+	@Test
+	public void testnewEventAuthenticated() {	
+		String login = "http://localhost:8080/sign-in";
+		String createEventPage = "http://localhost:8080/events/new";
+		template = new TestRestTemplate(HttpClientOption.ENABLE_COOKIES);
+		
+		// Create a new post header
+		HttpHeaders getMethod = new HttpHeaders();
+		getMethod.setAccept(Collections.singletonList(MediaType.TEXT_HTML));
+
+				
+		// Create a new post header
+		HttpHeaders postMethod = new HttpHeaders();
+		postMethod.setAccept(Collections.singletonList(MediaType.TEXT_HTML));
+		postMethod.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		//log into web page 
+		httpEntity = new HttpEntity<>(postMethod);
+		ResponseEntity<String> response = template.exchange("http://localhost:8080/sign-in", HttpMethod.GET, httpEntity, String.class);
+		
+		// Check the status
+		assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+		
+		// Check CSRF token
+		String responseBody = response.getBody();
+		Pattern p = Pattern.compile("(?s).*name=\"_csrf\".*?value=\"([^\"]+).*");
+		Matcher m = p.matcher(responseBody);
+		
+		
+		// Check the pattern of the CSRF token 
+		assertThat(m.matches(), equalTo(true));
+		
+		// Get the CSRF token
+		String token = m.group(1);
+		
+		String cookies = response.getHeaders().getFirst("Set-Cookie").split(";")[0];
+		
+		postMethod.set("Cookie", cookies);
+		MultiValueMap<String, String> loginDetail = new LinkedMultiValueMap<>();
+		loginDetail.add("_csrf", token);
+		loginDetail.add("username", "Rob");
+		loginDetail.add("password", "Haines");
+		
+		//send the request to the serve to log in
+		// Check the authentication 
+		HttpEntity<MultiValueMap<String, String>> postBody = new HttpEntity<MultiValueMap<String,String>>(loginDetail,postMethod); 
+		ResponseEntity<String> loginResponse = template.exchange(login, HttpMethod.POST, postBody, String.class);
+		assertThat(loginResponse.getStatusCode(), equalTo(HttpStatus.FOUND));
+		
+		getMethod.set("Cookie", cookies);
+		httpEntity = new HttpEntity<>(getMethod);
+		response = template.exchange(login, HttpMethod.GET, httpEntity, String.class);
+		
+		// Check CSRF token
+		responseBody = response.getBody();
+		p = Pattern.compile("(?s).*name=\"_csrf\".*?value=\"([^\"]+).*");
+		m = p.matcher(responseBody);
+		
+		
+		// Check the pattern of the CSRF token 
+		assertThat(m.matches(), equalTo(true));
+		
+		// Get the CSRF token
+		token = m.group(1);
+		
+		MultiValueMap<String, String> requestForCreatingEvent = new LinkedMultiValueMap<>();
+		requestForCreatingEvent.add("_csrf", token);
+		requestForCreatingEvent.add("name", "test");
+		requestForCreatingEvent.add("date", "2020-01-01");
+		requestForCreatingEvent.add("venue.id", "66");
+		postBody = new HttpEntity<MultiValueMap<String,String>>(requestForCreatingEvent,postMethod); 
+		ResponseEntity<String> sendInformation = template.exchange(createEventPage, HttpMethod.POST, postBody, String.class);
+		assertThat(sendInformation.getStatusCode(), equalTo(HttpStatus.FOUND));
+		
+	}
+//	@Test
+//	public void testUpdateEventAuthenticated() {	
+//		String login = "http://localhost:8080/sign-in";
+//		String updateEventPage = "http://localhost:8080/events/update/104";
+//		template = new TestRestTemplate(HttpClientOption.ENABLE_COOKIES);
+//		
+//		// Create a new post header
+//		HttpHeaders getMethod = new HttpHeaders();
+//		getMethod.setAccept(Collections.singletonList(MediaType.TEXT_HTML));
+//
+//				
+//		// Create a new post header
+//		HttpHeaders postMethod = new HttpHeaders();
+//		postMethod.setAccept(Collections.singletonList(MediaType.TEXT_HTML));
+//		postMethod.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//
+//		//log into web page 
+//		httpEntity = new HttpEntity<>(getMethod);
+//		ResponseEntity<String> response = template.exchange("http://localhost:8080/sign-in", HttpMethod.GET, httpEntity, String.class);
+//		
+//		// Check the status
+//		assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+//		
+//		// Check CSRF token
+//		String responseBody = response.getBody();
+//		Pattern p = Pattern.compile("(?s).*name=\"_csrf\".*?value=\"([^\"]+).*");
+//		Matcher m = p.matcher(responseBody);
+//		
+//		
+//		// Check the pattern of the CSRF token 
+//		assertThat(m.matches(), equalTo(true));
+//		
+//		// Get the CSRF token
+//		String token = m.group(1);
+//		
+//		String cookies = response.getHeaders().getFirst("Set-Cookie").split(";")[0];
+//		
+//		postMethod.set("Cookie", cookies);
+//		MultiValueMap<String, String> loginDetail = new LinkedMultiValueMap<>();
+//		loginDetail.add("_csrf", token);
+//		loginDetail.add("username", "Rob");
+//		loginDetail.add("password", "Haines");
+//		
+//		//send the request to the serve to log in
+//		// Check the authentication 
+//		HttpEntity<MultiValueMap<String, String>> postBody = new HttpEntity<MultiValueMap<String,String>>(loginDetail,postMethod); 
+//		ResponseEntity<String> loginResponse = template.exchange(login, HttpMethod.POST, postBody, String.class);
+//		assertThat(loginResponse.getStatusCode(), equalTo(HttpStatus.FOUND));
+//		
+//		getMethod.set("Cookie", cookies);
+//		httpEntity = new HttpEntity<>(getMethod);
+//		response = template.exchange(login, HttpMethod.GET, httpEntity, String.class);
+//		
+//		// Check CSRF token
+//		responseBody = response.getBody();
+//		p = Pattern.compile("(?s).*name=\"_csrf\".*?value=\"([^\"]+).*");
+//		m = p.matcher(responseBody);
+//		
+//		
+//		// Check the pattern of the CSRF token 
+//		assertThat(m.matches(), equalTo(true));
+//		
+//		// Get the CSRF token
+//		token = m.group(1);
+//		
+//		MultiValueMap<String, String> requestForCreatingEvent = new LinkedMultiValueMap<>();
+//		requestForCreatingEvent.add("_csrf", token);
+//		requestForCreatingEvent.add("name", "test");
+//		requestForCreatingEvent.add("date", "2020-01-01");
+//		requestForCreatingEvent.add("time", "10:30");
+//		requestForCreatingEvent.add("venue.id", "66");
+//		postBody = new HttpEntity<MultiValueMap<String,String>>(requestForCreatingEvent,postMethod); 
+//		ResponseEntity<String> sendInformation = template.exchange(updateEventPage, HttpMethod.POST, postBody, String.class);
+//		assertThat(sendInformation.getStatusCode(), equalTo(HttpStatus.OK));
+//		
+//		
+//	}
+	
 
 }
