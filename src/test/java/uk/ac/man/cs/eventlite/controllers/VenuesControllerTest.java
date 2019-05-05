@@ -2,14 +2,10 @@
 
 package uk.ac.man.cs.eventlite.controllers;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.any;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -23,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.Filter;
 
@@ -42,6 +39,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import uk.ac.man.cs.eventlite.EventLite;
@@ -75,16 +73,231 @@ public class VenuesControllerTest {
 
 	@InjectMocks
 	private VenuesController venuesController;
-
+	
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		mvc = MockMvcBuilders.standaloneSetup(venuesController).apply(springSecurity(springSecurityFilterChain))
 				.build();
 	}
+	
+	
+	@Test
+	public void testCreateVenueWithCorretData() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.post("/venues/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","Test")
+				.param("capacity","1000")
+				.param("roadname","Kilburn Building")
+				.param("postcode","M6 GES")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isOk()).andExpect(view().name("venues/new"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("createVenue"));
+	}
+	
+	@Test
+	public void testCreateVenueWithNegativeCapacity() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.post("/venues/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","Test")
+				.param("capacity","-1000")
+				.param("roadname","Kilburn Building")
+				.param("postcode","M7 GES")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isOk()).andExpect(view().name("venues/new"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("createVenue"));
+	}
+	
+	@Test
+	public void testCreateVenueWithNameTooLong() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.post("/venues/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")
+				.param("capacity","1000")
+				.param("roadname","Kilburn Building")
+				.param("postcode","M7 GES")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isOk()).andExpect(view().name("venues/new"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("createVenue"));
+	}
+	
+	@Test
+	public void testCreateVenueWithAddressTooLong() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.post("/venues/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","Test")
+				.param("capacity","1000")
+				.param("roadname","111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")
+				.param("postcode","M7 GES")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isOk()).andExpect(view().name("venues/new"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("createVenue"));
+	}
+	
+	@Test
+	public void testCreateVenueWithoutPostcode() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.post("/venues/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","Test")
+				.param("capacity","1000")
+				.param("roadname","Kilburn Building")
+				.param("postcode","")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isOk()).andExpect(view().name("venues/new"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("createVenue"));
+	}
+	
+	
+	@Test
+	public void testUpdateVenueWithCorrectData() throws Exception {
+		Venue venue1 = new Venue();
+		venueService.save(venue1);
+		when(venueService.findOne(0)).thenReturn(venue1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/venues/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("id", "0")
+				.param("name", "test")
+				.param("roadname", "test")
+				.param("postcode", "M13 9PL")
+				.param("capacity", "1")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isFound()).andExpect(content().string(""))
+		.andExpect(view().name("redirect:/venues"))
+		.andExpect(model().hasNoErrors())
+		.andExpect(handler().methodName("updateVenue")).andExpect(flash().attributeExists("ok_message"));
+
+	}
+	
+	@Test
+	public void testUpdateVenueWithNegativeCapacity() throws Exception {
+		Venue venue1 = new Venue();
+		venueService.save(venue1);
+		when(venueService.findOne(0)).thenReturn(venue1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/venues/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("id", "0")
+				.param("name", "test")
+				.param("roadname", "test")
+				.param("postcode", "M13 9PL")
+				.param("capacity", "-1")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(content().string(""))
+		.andExpect(view().name("venues/update"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("updateVenue"));
+
+	}
+	
+	@Test
+	public void testUpdateVenueWithNameTooLong() throws Exception {
+		Venue venue1 = new Venue();
+		venueService.save(venue1);
+		when(venueService.findOne(0)).thenReturn(venue1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/venues/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("id", "0")
+				.param("name", "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")
+				.param("roadname", "test")
+				.param("postcode", "M13 9PL")
+				.param("capacity", "1")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(content().string(""))
+		.andExpect(view().name("venues/update"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("updateVenue"));
+
+	}
+	
+	@Test
+	public void testUpdateVenueWithAddressTooLong() throws Exception {
+		Venue venue1 = new Venue();
+		venueService.save(venue1);
+		when(venueService.findOne(0)).thenReturn(venue1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/venues/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("id", "0")
+				.param("name", "Test")
+				.param("roadname", "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")
+				.param("postcode", "M13 9PL")
+				.param("capacity", "1")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(content().string(""))
+		.andExpect(view().name("venues/update"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("updateVenue"));
+
+	}
+	
+	@Test
+	public void testUpdateVenueWithoutPostCode() throws Exception {
+		Venue venue1 = new Venue();
+		venueService.save(venue1);
+		when(venueService.findOne(0)).thenReturn(venue1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/venues/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("id", "0")
+				.param("name", "Test")
+				.param("roadname", "test")
+				.param("postcode", "")
+				.param("capacity", "1")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(content().string(""))
+		.andExpect(view().name("venues/update"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("updateVenue"));
+
+	}
+	
+	@Test
+	public void testRemoveVenueWithoutEvent() throws Exception {
+		
+		Venue venue1 = new Venue();
+		venueService.save(venue1);
+		
+		when(venueService.findOne(0)).thenReturn(venue1);
+		
+		mvc.perform(MockMvcRequestBuilders.get("/venues/delete/0").accept(MediaType.TEXT_HTML))
+		
+		.andExpect(status().isFound())
+		.andExpect(view().name("redirect:/venues"))
+		.andExpect(handler().methodName("deleteVenue"));
+	} 
+	
+	@Test
+	public void testRemoveVenueWithOneOrMoreEvents() throws Exception {
+		
+		Venue venue1 = new Venue();
+		
+		
+		Event event1 = new Event();
+		venue1.addEvent(event1);
+		venueService.save(venue1);
+		
+		when(venueService.findOne(0)).thenReturn(venue1);
+		
+		mvc.perform(MockMvcRequestBuilders.get("/venues/delete/0").accept(MediaType.TEXT_HTML))
+		
+		.andExpect(status().isFound())
+		.andExpect(view().name("redirect:/venues"))
+		.andExpect(handler().methodName("deleteVenue"));
+	} 
 
 	@Test
-	public void getIndexVenue() throws Exception {
+	public void testGetAllVenuesOrderedAlphabetically() throws Exception {
 
 		when(venueService.findOne(0)).thenReturn(venue);
 
@@ -95,35 +308,43 @@ public class VenuesControllerTest {
 		verifyZeroInteractions(venue);
 	}
 	
-	
 	@Test
-	public void getRemoveVenue() throws Exception {
-		
+	public void testGetIndexWhenNoVenue() throws Exception {
+		when(venueService.findAll()).thenReturn(Collections.<Venue> emptyList());
+
+
+		mvc.perform(get("/venues").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
+				.andExpect(view().name("venues/index")).andExpect(handler().methodName("getAllVenues"));
+
+		verifyZeroInteractions(venue);
+	}
+
+	@Test
+	public void testGetIndexWithVenues() throws Exception {
 		Venue venue1 = new Venue();
 		venueService.save(venue1);
-		when(venueService.findOne(0)).thenReturn(venue1);
-		mvc.perform(MockMvcRequestBuilders.get("/venues/delete/0").accept(MediaType.TEXT_HTML)).andExpect(status().isFound())
-		.andExpect(view().name("redirect:/venues")).andExpect(handler().methodName("deleteVenue"));
+		
+		List<Venue> venues = (List<Venue>) venueService.findAll();
+		
+		when(venueService.findAll()).thenReturn(venues);
+
+		
+		mvc.perform(get("/venues").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
+				.andExpect(view().name("venues/index")).andExpect(handler().methodName("getAllVenues"));
+
+		verify(venueService).findAll();
 		verifyZeroInteractions(venue);
-		//verifyZeroInteractions(venue);
-	} 
-	@Test
-	public void getNewVenue() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/venues/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("venues/new"))
-		.andExpect(handler().methodName("newVenue"));
 	}
 	
 	@Test
-	public void linkToSearchVenue() throws Exception {
+	public void testLinkToSearch() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/venues/search")
 				.accept(MediaType.TEXT_HTML))
 		.andExpect(status().isOk()).andExpect(view().name("venues/search"));
 	}
 	
 	@Test
-	public void searchVenue() throws Exception {
+	public void testSearchVenueKey() throws Exception {
 		mvc.perform(MockMvcRequestBuilders.get("/venues/result?key=Venue")
 				.accept(MediaType.TEXT_HTML))
 		.andExpect(status().isOk()).andExpect(view().name("venues/result"))
@@ -134,17 +355,16 @@ public class VenuesControllerTest {
 	}
 	
 	@Test
-	public void updateVenue() throws Exception {
-		Venue venue1 = new Venue();
-		venueService.save(venue1);
-		when(venueService.findOne(0)).thenReturn(venue1);
-		mvc.perform(MockMvcRequestBuilders.put("/venues/0").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-				.param("id", "0").param("name", "test").param("roadname", "test").param("postcode", "M13 9PL").param("capacity", "1")
-				.accept(MediaType.TEXT_HTML).with(csrf()))
-		.andExpect(status().isFound()).andExpect(content().string(""))
-		.andExpect(view().name("redirect:/venues")).andExpect(model().hasNoErrors())
-		.andExpect(handler().methodName("updateVenue")).andExpect(flash().attributeExists("ok_message"));
+	public void testGetVenueDetail() throws Exception {
 
+		when(venueService.findOne(0)).thenReturn(venue);
+
+		mvc.perform(get("/venues/0").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
+		.andExpect(view().name("venues/venue")).andExpect(handler().methodName("getVenue"));
+
+		verify(venueService).findOne(0);
+		verifyZeroInteractions(venue);
 	}
+	
+
 }
