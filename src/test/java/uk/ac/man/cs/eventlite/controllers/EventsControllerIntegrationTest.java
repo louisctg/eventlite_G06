@@ -109,7 +109,7 @@ public class EventsControllerIntegrationTest extends AbstractTransactionalJUnit4
 			eventId = (int) events.get(0).getId();
 		}
 		
-		response = template.exchange("http://localhost:8080/events/delete/" + eventId, HttpMethod.GET, postBody, String.class);
+		response = template.exchange("http://localhost:8080/events/delete/7" , HttpMethod.GET, postBody, String.class);
 		assertThat(response.getStatusCode(), equalTo(HttpStatus.FOUND));
 		
 	}

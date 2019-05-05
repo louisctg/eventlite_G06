@@ -3,6 +3,7 @@ package uk.ac.man.cs.eventlite.dao;
 import java.util.Iterator;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -33,19 +34,6 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public Iterable<Event> findAll() {
-		/*
-		ArrayList<Event> events = new ArrayList<Event>();
-
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			InputStream in = new ClassPathResource(DATA).getInputStream();
-
-			events = mapper.readValue(in, mapper.getTypeFactory().constructCollectionType(List.class, Event.class));
-		} catch (Exception e) {
-			log.error("Exception while reading file '" + DATA + "': " + e);
-			// If we can't read the file, then the event list is empty...
-		}
-		*/
 		return eventRepository.findAllByOrderByDateAscTimeAsc();
 	}
 	
@@ -210,4 +198,5 @@ public class EventServiceImpl implements EventService {
 		}
 		return incomingEvents;  
   }
+
 }
