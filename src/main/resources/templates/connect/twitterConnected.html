@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{layouts/default}">
+
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+  <head>
+    <title>Hello Twitter</title>
+      <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    
+  </head>
+  <body>
+  <div layout:fragment="content">
+    <h3>Connected to Twitter</h3>
+
+    <p>
+      You are now connected to your Twitter account.
+      Click <a href="/">here</a> to see your Twitter friends.
+    </p>
+    </div>
+  </body>
+</html>
