@@ -1,6 +1,7 @@
 package uk.ac.man.cs.eventlite.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import uk.ac.man.cs.eventlite.entities.Event;
 
@@ -34,4 +35,5 @@ public interface EventService {
 	
 	public Iterable<Event> futureEventsOrganiser(Iterable<Event> events, String organiserName);
 	public Iterable<Event> pastEventsOrganiser(Iterable<Event> events, String organiserName);
+	
 }

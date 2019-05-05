@@ -57,19 +57,25 @@ public class VenuesControllerApi {
 
 	private Resource<Venue> venueToResource(Venue venue) {
 		Link selfLink = linkTo(VenuesControllerApi.class).slash(venue.getId()).withSelfRel();
+		Link venueLink = linkTo(VenuesControllerApi.class).slash(venue.getId()).withRel("venue");
 		Link eventLink = linkTo(VenuesControllerApi.class).slash(venue.getId()).slash("events").withRel("events");
 		Link next3eventLink = linkTo(VenuesControllerApi.class).slash(venue.getId()).slash("next3events").withRel("next3events");
-		return new Resource<Venue>(venue, selfLink,eventLink,next3eventLink);
+		return new Resource<Venue>(venue, selfLink, venueLink, eventLink, next3eventLink);
 	}
 
 	private Resources<Resource<Venue>> venueToResource(Iterable<Venue> venues) {
 		Link selfLink = linkTo(methodOn(VenuesControllerApi.class).getAllVenues()).withSelfRel();
-		Link profileLink = linkTo(methodOn(HomeControllerApi.class).getAllHomeLinks()).slash("profile").slash("venues").withRel("venues");
+		Link profileLink = linkTo(methodOn(HomeControllerApi.class).getAllHomeLinks()).slash("profile").slash("venues").withRel("profile");
 		List<Resource<Venue>> resources = new ArrayList<Resource<Venue>>();
+		if(venues != null)
 		for (Venue venue : venues) {
 			resources.add(venueToResource(venue));
 		}
+//		else{
+//			resources.add(profileLink);
+//		}
 
 		return new Resources<Resource<Venue>>(resources, selfLink, profileLink);
 	}
+
 }
