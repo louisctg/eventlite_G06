@@ -87,16 +87,23 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 	@Test
 	public void testPostAddNewVenueWithSensibleData() {
 
-		template = new TestRestTemplate();
+		String login = "http://localhost:8080/sign-in";
+		String createEventPage = "http://localhost:8080/venues/new";
+		template = new TestRestTemplate(HttpClientOption.ENABLE_COOKIES);
 		
+		// Create a new post header
+		HttpHeaders getMethod = new HttpHeaders();
+		getMethod.setAccept(Collections.singletonList(MediaType.TEXT_HTML));
+
+				
 		// Create a new post header
 		HttpHeaders postMethod = new HttpHeaders();
 		postMethod.setAccept(Collections.singletonList(MediaType.TEXT_HTML));
 		postMethod.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-		// Set the get header
+		//log into web page 
 		httpEntity = new HttpEntity<>(postMethod);
-		ResponseEntity<String> response = template.exchange("/venues/new", HttpMethod.POST, httpEntity, String.class);
+		ResponseEntity<String> response = template.exchange("http://localhost:8080/sign-in", HttpMethod.GET, httpEntity, String.class);
 		
 		// Check the status
 		assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
@@ -105,26 +112,56 @@ public class VenuesControllerIntegrationTest extends AbstractTransactionalJUnit4
 		String responseBody = response.getBody();
 		Pattern p = Pattern.compile("(?s).*name=\"_csrf\".*?value=\"([^\"]+).*");
 		Matcher m = p.matcher(responseBody);
-
+		
+		
 		// Check the pattern of the CSRF token 
 		assertThat(m.matches(), equalTo(true));
 		
 		// Get the CSRF token
 		String token = m.group(1);
-
-
-		MultiValueMap<String, String> venueDetail = new LinkedMultiValueMap<String,String>();
-		venueDetail.add("_csrf", token);
-		venueDetail.add("name", "Test Venue");
-		venueDetail.add("capacity", "10000");
-		venueDetail.add("roadname", "Test Road");
-		venueDetail.add("postcode", "WA13 0HP");
-
 		
-		// Check add new venue with sensible data 
-		HttpEntity<MultiValueMap<String, String>> postBody = new HttpEntity<MultiValueMap<String,String>>(venueDetail,postMethod); 
-		response = template.exchange("/venues/new", HttpMethod.POST, postBody, String.class);
-		assertThat(response.getStatusCode(), equalTo(HttpStatus.FOUND));
+		String cookies = response.getHeaders().getFirst("Set-Cookie").split(";")[0];
+		
+		postMethod.set("Cookie", cookies);
+		MultiValueMap<String, String> loginDetail = new LinkedMultiValueMap<>();
+		loginDetail.add("_csrf", token);
+		loginDetail.add("username", "Rob");
+		loginDetail.add("password", "Haines");
+		
+		//send the request to the serve to log in
+		// Check the authentication 
+		HttpEntity<MultiValueMap<String, String>> postBody = new HttpEntity<MultiValueMap<String,String>>(loginDetail,postMethod); 
+		ResponseEntity<String> loginResponse = template.exchange(login, HttpMethod.POST, postBody, String.class);
+		assertThat(loginResponse.getStatusCode(), equalTo(HttpStatus.FOUND));
+		
+		getMethod.set("Cookie", cookies);
+		httpEntity = new HttpEntity<>(getMethod);
+		response = template.exchange(login, HttpMethod.GET, httpEntity, String.class);
+		
+		// Check CSRF token
+		responseBody = response.getBody();
+		p = Pattern.compile("(?s).*name=\"_csrf\".*?value=\"([^\"]+).*");
+		m = p.matcher(responseBody);
+		
+		
+		// Check the pattern of the CSRF token 
+		assertThat(m.matches(), equalTo(true));
+		
+		// Get the CSRF token
+		token = m.group(1);
+		
+		MultiValueMap<String, String> requestForCreatingEvent = new LinkedMultiValueMap<>();
+		requestForCreatingEvent.add("_csrf", token);
+		requestForCreatingEvent.add("name", "Test Venue");
+		requestForCreatingEvent.add("capacity", "10000");
+		requestForCreatingEvent.add("roadname", "MyHouse");
+		requestForCreatingEvent.add("postcode", "M1 5EA");
+		requestForCreatingEvent.add("lat", "10");
+		requestForCreatingEvent.add("lng", "10");
+		postBody = new HttpEntity<MultiValueMap<String,String>>(requestForCreatingEvent,postMethod); 
+		ResponseEntity<String> sendInformation = template.exchange(createEventPage, HttpMethod.POST, postBody, String.class);
+		assertThat(sendInformation.getStatusCode(), equalTo(HttpStatus.FOUND));
+		
 		
 	}
 	
