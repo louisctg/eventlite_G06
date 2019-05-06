@@ -22,6 +22,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
 @Entity
 @Table(name = "Venue")
 public class Venue {
