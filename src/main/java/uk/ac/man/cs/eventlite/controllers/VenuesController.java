@@ -71,7 +71,7 @@ public class VenuesController {
 		}
 		venue.setCoordinates(venue.getAddress(), venue.getPostcode());
 		venueService.save(venue);
-		redirectAttrs.addFlashAttribute("ok_message", "New venue added.");
+		redirectAttrs.addFlashAttribute("success_message", "New venue added.");
 
 		return "redirect:/venues";
 	}
@@ -110,7 +110,7 @@ public class VenuesController {
 
 		venue.setId(id);
 		venueService.save(venue);
-		redirAttrs.addFlashAttribute("ok_message", "Venue updated.");
+		redirAttrs.addFlashAttribute("success_message", "Venue updated.");
 
 		return "redirect:/venues";
 	}
@@ -119,7 +119,6 @@ public class VenuesController {
 	public String deleteVenue(@PathVariable("id") long id, RedirectAttributes attributes)
 	{
 		try{
-			
 			// Get the event list of the venue
 			List<Event> events = (List<Event>) eventService.findUpcomingEventsWithVenue(id);			
 			
@@ -131,7 +130,6 @@ public class VenuesController {
 			{
 				attributes.addFlashAttribute("message", "This venue has other upcoming events. You shouldn't remove this!");
 			}
-			
 			
 		} catch (Exception e)
 		{

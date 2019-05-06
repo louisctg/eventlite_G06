@@ -73,6 +73,13 @@ public class VenuesControllerTest {
 	
 	private String testMaxChar;
 	
+	private String name;
+	private String roadname;
+	private String postcode;
+	private double latitude;
+	private double longitude;
+
+	
 	@InjectMocks
 	private VenuesController venuesController;
 	
@@ -82,6 +89,13 @@ public class VenuesControllerTest {
 		char[] c = new char[999];
 		testMaxChar = new String(c);
 		
+		name = "Kilburn Building";
+		roadname = "Oxford Rd, Manchester";
+		postcode = "M13 9PL";
+		longitude = -2.23212457975274;
+		latitude = 53.4763057835875;
+		
+		
 		MockitoAnnotations.initMocks(this);
 		mvc = MockMvcBuilders.standaloneSetup(venuesController).apply(springSecurity(springSecurityFilterChain))
 				.build();
@@ -90,16 +104,20 @@ public class VenuesControllerTest {
 	
 	@Test
 	public void testCreateVenueWithCorretData() throws Exception {
+		
+		
 		mvc.perform(MockMvcRequestBuilders.post("/venues/new").with(user("Rob").roles(Security.ADMIN_ROLE))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.param("name","Test")
 				.param("capacity","1000")
 				.param("roadname","Kilburn Building")
-				.param("postcode","M6 GES")
+				.param("postcode","M13 9PL")
 				.accept(MediaType.TEXT_HTML).with(csrf()))
-		.andExpect(status().isOk()).andExpect(view().name("venues/new"))
-		.andExpect(model().hasErrors())
-		.andExpect(handler().methodName("createVenue"));
+		.andExpect(status().isFound())
+		.andExpect(view().name("redirect:/venues"))
+		.andExpect(model().hasNoErrors())
+		.andExpect(handler().methodName("createVenue"))
+		.andExpect(flash().attributeExists("success_message"));
 	}
 	
 	@Test
@@ -109,7 +127,7 @@ public class VenuesControllerTest {
 				.param("name","Test")
 				.param("capacity","-1000")
 				.param("roadname","Kilburn Building")
-				.param("postcode","M7 GES")
+				.param("postcode","M13 9PL")
 				.accept(MediaType.TEXT_HTML).with(csrf()))
 		.andExpect(status().isOk()).andExpect(view().name("venues/new"))
 		.andExpect(model().hasErrors())
@@ -123,7 +141,7 @@ public class VenuesControllerTest {
 				.param("name",testMaxChar)
 				.param("capacity","1000")
 				.param("roadname","Kilburn Building")
-				.param("postcode","M7 GES")
+				.param("postcode","M13 9PL")
 				.accept(MediaType.TEXT_HTML).with(csrf()))
 		.andExpect(status().isOk()).andExpect(view().name("venues/new"))
 		.andExpect(model().hasErrors())
@@ -137,7 +155,7 @@ public class VenuesControllerTest {
 				.param("name","Test")
 				.param("capacity","1000")
 				.param("roadname",testMaxChar)
-				.param("postcode","M7 GES")
+				.param("postcode","M13 9PL")
 				.accept(MediaType.TEXT_HTML).with(csrf()))
 		.andExpect(status().isOk()).andExpect(view().name("venues/new"))
 		.andExpect(model().hasErrors())
@@ -151,7 +169,21 @@ public class VenuesControllerTest {
 				.param("name","Test")
 				.param("capacity","1000")
 				.param("roadname","Kilburn Building")
-				.param("postcode","")
+				.param("postcode", "")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isOk()).andExpect(view().name("venues/new"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("createVenue"));
+	}
+	
+	@Test
+	public void testCreateVenueWithInvalidPostcode() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.post("/venues/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","Test")
+				.param("capacity","1000")
+				.param("roadname","Kilburn Building")
+				.param("postcode", "Mfadasd")
 				.accept(MediaType.TEXT_HTML).with(csrf()))
 		.andExpect(status().isOk()).andExpect(view().name("venues/new"))
 		.andExpect(model().hasErrors())
@@ -176,7 +208,7 @@ public class VenuesControllerTest {
 		.andExpect(status().isFound()).andExpect(content().string(""))
 		.andExpect(view().name("redirect:/venues"))
 		.andExpect(model().hasNoErrors())
-		.andExpect(handler().methodName("updateVenue")).andExpect(flash().attributeExists("ok_message"));
+		.andExpect(handler().methodName("updateVenue")).andExpect(flash().attributeExists("success_message"));
 
 	}
 	
@@ -371,5 +403,60 @@ public class VenuesControllerTest {
 		verifyZeroInteractions(venue);
 	}
 	
-
+	@Test
+	public void testCoordinatesAfterCreatingVenue() throws Exception {
+		
+		ArgumentCaptor<Venue> argument = ArgumentCaptor.forClass(Venue.class);
+		
+		mvc.perform(MockMvcRequestBuilders.post("/venues/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","Kilburn Building")
+				.param("capacity","1000")
+				.param("roadname","Oxford Rd, Manchester")
+				.param("postcode","M13 9PL")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isFound())
+		.andExpect(view().name("redirect:/venues"))
+		.andExpect(model().hasNoErrors())
+		.andExpect(handler().methodName("createVenue"))
+		.andExpect(flash().attributeExists("success_message"));
+		
+		verify(venueService).save(argument.capture());
+		
+		assertThat(name,equalTo(argument.getValue().getName()));
+		assertThat(roadname,equalTo(argument.getValue().getRoadname()));
+		assertThat(postcode,equalTo(argument.getValue().getPostcode()));
+		assertThat(latitude,equalTo(argument.getValue().getLat()));
+		assertThat(longitude,equalTo(argument.getValue().getLng()));
+	}
+	
+	@Test
+	public void testCoordinatesAfterUpdatingVenue() throws Exception {
+		
+		ArgumentCaptor<Venue> argument = ArgumentCaptor.forClass(Venue.class);
+		
+		Venue venue1 = new Venue();
+		when(venueService.findOne(0)).thenReturn(venue1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/venues/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("id", "0")
+				.param("name","Kilburn Building")
+				.param("capacity","1000")
+				.param("roadname","Oxford Rd, Manchester")
+				.param("postcode","M13 9PL")
+				.accept(MediaType.TEXT_HTML).with(csrf()))
+		.andExpect(status().isFound()).andExpect(content().string(""))
+		.andExpect(view().name("redirect:/venues"))
+		.andExpect(model().hasNoErrors())
+		.andExpect(handler().methodName("updateVenue")).andExpect(flash().attributeExists("success_message"));
+		
+		verify(venueService).save(argument.capture());
+		
+		assertThat(name,equalTo(argument.getValue().getName()));
+		assertThat(roadname,equalTo(argument.getValue().getRoadname()));
+		assertThat(postcode,equalTo(argument.getValue().getPostcode()));
+		assertThat(latitude,equalTo(argument.getValue().getLat()));
+		assertThat(longitude,equalTo(argument.getValue().getLng()));
+	}
 }

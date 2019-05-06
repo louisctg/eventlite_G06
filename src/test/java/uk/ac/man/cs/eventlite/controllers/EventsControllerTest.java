@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.social.twitter.api.Twitter;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -72,7 +73,11 @@ public class EventsControllerTest {
 	private Venue venue;
 	
 	private String testMaxChar;
-	private String presentDay;
+	private String presentDay;	
+	
+	@Mock
+	@Autowired
+	private Twitter twitter;
 
 	@Mock
 	private EventService eventService;
@@ -93,7 +98,8 @@ public class EventsControllerTest {
 		Date dateobj = new Date();
 		
 		presentDay = df.format(dateobj);
-	
+		
+		
 		MockitoAnnotations.initMocks(this);
 		mvc = MockMvcBuilders.standaloneSetup(eventsController).apply(springSecurity(springSecurityFilterChain))
 				.build();
@@ -704,6 +710,25 @@ public class EventsControllerTest {
 		
 		verify(eventService).delete(0);
 		verifyZeroInteractions(event);
+	}
+	
+	@Test
+	public void testTweetEventConnection() throws Exception {
+		
+		// When user not login twitter
+		when(!twitter.isAuthorized()).thenReturn(false);
+		
+		Event e1 = new Event();
+		eventService.save(e1);
+		
+		mvc.perform(MockMvcRequestBuilders.post("/events/0/tweet").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.with(csrf())
+				.accept(MediaType.TEXT_HTML)
+				.param("tweet","Hello"))
+		.andExpect(status().isFound())
+		.andExpect(view().name("redirect:/connect/twitter"))
+		.andExpect(handler().methodName("tweetEvent"));
 	}
 	
 }
