@@ -3,9 +3,7 @@ package uk.ac.man.cs.eventlite.controllers;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -18,6 +16,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
@@ -39,6 +40,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,6 +67,12 @@ public class EventsControllerTest {
 
 	@Mock
 	private Event event;
+	
+	@Mock
+	private Venue venue;
+	
+	private String testMaxChar;
+	private String presentDay;
 
 	@Mock
 	private EventService eventService;
@@ -77,6 +85,15 @@ public class EventsControllerTest {
 
 	@Before
 	public void setup() {
+		
+		char[] c = new char[999];
+		testMaxChar = new String(c);
+		
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		Date dateobj = new Date();
+		
+		presentDay = df.format(dateobj);
+	
 		MockitoAnnotations.initMocks(this);
 		mvc = MockMvcBuilders.standaloneSetup(eventsController).apply(springSecurity(springSecurityFilterChain))
 				.build();
@@ -88,8 +105,10 @@ public class EventsControllerTest {
 		when(eventService.findPastEventsOrderedByNameAndDate()).thenReturn(Collections.<Event> emptyList());
 
 
-		mvc.perform(get("/events").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
-				.andExpect(view().name("events/index")).andExpect(handler().methodName("getAllEvents"));
+		mvc.perform(get("/events")
+				.accept(MediaType.TEXT_HTML))
+		.andExpect(status().isOk())
+		.andExpect(view().name("events/index"));
 
 		verify(eventService).findFutureEventsOrderedByNameAndDate();
 		verify(eventService).findPastEventsOrderedByNameAndDate();
@@ -98,11 +117,15 @@ public class EventsControllerTest {
 
 	@Test
 	public void testGetIndexWithEvents() throws Exception {
+		
 		when(eventService.findFutureEventsOrderedByNameAndDate()).thenReturn(Collections.<Event> singletonList(event));
 		when(eventService.findPastEventsOrderedByNameAndDate()).thenReturn(Collections.<Event> singletonList(event));
 
-		mvc.perform(get("/events").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
-				.andExpect(view().name("events/index")).andExpect(handler().methodName("getAllEvents"));
+		mvc.perform(get("/events")
+				.accept(MediaType.TEXT_HTML))
+		.andExpect(status().isOk())
+		.andExpect(view().name("events/index"))
+		.andExpect(handler().methodName("getAllEvents"));
 
 		verify(eventService).findFutureEventsOrderedByNameAndDate();
 		verify(eventService).findPastEventsOrderedByNameAndDate();
@@ -141,197 +164,528 @@ public class EventsControllerTest {
 	}
 	
 	@Test
-	public void testCreateNewEventWithCorrectDataWithAuthenticated() throws Exception {
+	public void testCreateEventPage() throws Exception {
+		//ArgumentCaptor<Event> arg = ArgumentCaptor.forClass(Event.class);
 		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
 				.accept(MediaType.TEXT_HTML))
 		.andExpect(status().isOk()).andExpect(view().name("events/new"))
 		.andExpect(handler().methodName("newEvent"));
+
+	}
+	
+	@Test
+	public void testCreateNewEventWithCorrectDataWithAuthenticated() throws Exception {
+		
+	    when(eventService.save(event)).thenReturn(event);
+	    when(venueService.findAll()).thenReturn(Collections.<Venue> singletonList(venue));
+	    	
+		mvc.perform(MockMvcRequestBuilders.post("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","Test")
+				.param("date","2099-08-01")
+				.param("time","20:54")
+				.param("description", "Test")
+				.param("venue.name", "Venue A")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(model().hasNoErrors())
+		.andExpect(view().name("redirect:/events"))
+		.andExpect(MockMvcResultMatchers.flash().attribute("message", "New event added."))
+		.andExpect(status().isFound())
+		.andExpect(handler().methodName("createEvent"));
+		
+		verify(venueService, never()).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
+
 	}
 	
 	@Test
 	public void testCreateNewEventWithoutName() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+	    when(eventService.save(event)).thenReturn(event);
+	    when(venueService.findAll()).thenReturn(Collections.<Venue> singletonList(venue));
+	    	
+		mvc.perform(MockMvcRequestBuilders.post("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","")
+				.param("date","2099-08-01")
+				.param("time","20:54")
+				.param("description", "Test")
+				.param("venue.name", "Venue A")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(model().hasErrors())
+		.andExpect(view().name("events/new"))
+		.andExpect(status().isOk())
+		.andExpect(handler().methodName("createEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
+
 	}
 	
 	@Test
 	public void testCreateNewEventWithoutDate() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+	    when(eventService.save(event)).thenReturn(event);
+	    when(venueService.findAll()).thenReturn(Collections.<Venue> singletonList(venue));
+	    	
+		mvc.perform(MockMvcRequestBuilders.post("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","Test")
+				.param("date","")
+				.param("time","20:54")
+				.param("description", "Test")
+				.param("venue.name", "Venue A")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(model().hasErrors())
+		.andExpect(view().name("events/new"))
+		.andExpect(status().isOk())
+		.andExpect(handler().methodName("createEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
 	}
 	
 	@Test
 	public void testCreateNewEventWithoutVenue() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+	    when(eventService.save(event)).thenReturn(event);
+	    when(venueService.findAll()).thenReturn(Collections.<Venue> singletonList(venue));
+	    	
+		mvc.perform(MockMvcRequestBuilders.post("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","Test")
+				.param("date","2099-10-10")
+				.param("time","20:54")
+				.param("description", "Test")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(model().hasErrors())
+		.andExpect(view().name("events/new"))
+		.andExpect(status().isOk())
+		.andExpect(handler().methodName("createEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
 	}
 	
 	
 	@Test
 	public void testCreateNewEventWithNameTooLong() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+	    when(eventService.save(event)).thenReturn(event);
+	    when(venueService.findAll()).thenReturn(Collections.<Venue> singletonList(venue));
+	    	
+		mvc.perform(MockMvcRequestBuilders.post("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name",testMaxChar)
+				.param("date","2099-10-10")
+				.param("time","20:54")
+				.param("description", "Test")
+				.param("venue.name", "Venue A")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(model().hasErrors())
+		.andExpect(view().name("events/new"))
+		.andExpect(status().isOk())
+		.andExpect(handler().methodName("createEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
 	}
 	
 	@Test
 	public void testCreateNewEventWithDateBeforePresentDay() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+	    when(eventService.save(event)).thenReturn(event);
+	    when(venueService.findAll()).thenReturn(Collections.<Venue> singletonList(venue));
+	    	
+		mvc.perform(MockMvcRequestBuilders.post("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","Test")
+				.param("date","0000-08-01")
+				.param("time","20:54")
+				.param("description", "Test")
+				.param("venue.name", "Venue A")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(model().hasErrors())
+		.andExpect(view().name("events/new"))
+		.andExpect(status().isOk())
+		.andExpect(handler().methodName("createEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
+	}
+	
+	@Test
+	public void testCreateNewEventWithDateOnPresentDay() throws Exception {
+	    when(eventService.save(event)).thenReturn(event);
+	    when(venueService.findAll()).thenReturn(Collections.<Venue> singletonList(venue));
+	    	
+		mvc.perform(MockMvcRequestBuilders.post("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","Test")
+				.param("date",presentDay)
+				.param("time","20:54")
+				.param("description", "Test")
+				.param("venue.name", "Venue A")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(model().hasErrors())
+		.andExpect(view().name("events/new"))
+		.andExpect(status().isOk())
+		.andExpect(handler().methodName("createEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
 	}
 	
 	@Test
 	public void testCreateNewEventWithDescriptionTooLong() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+	    when(eventService.save(event)).thenReturn(event);
+	    when(venueService.findAll()).thenReturn(Collections.<Venue> singletonList(venue));
+	    	
+		mvc.perform(MockMvcRequestBuilders.post("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","Test")
+				.param("date","2020-08-01")
+				.param("time","20:54")
+				.param("description", testMaxChar)
+				.param("venue.name", "Venue A")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(model().hasErrors())
+		.andExpect(view().name("events/new"))
+		.andExpect(status().isOk())
+		.andExpect(handler().methodName("createEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
 	}
 	
 	@Test
 	public void testCreateNewEventWithoutTime() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+	    when(eventService.save(event)).thenReturn(event);
+	    when(venueService.findAll()).thenReturn(Collections.<Venue> singletonList(venue));
+	    	
+		mvc.perform(MockMvcRequestBuilders.post("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","")
+				.param("date","2020-08-01")
+				.param("description", "Test")
+				.param("venue.name", "Venue A")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(model().hasErrors())
+		.andExpect(view().name("events/new"))
+		.andExpect(status().isOk())
+		.andExpect(handler().methodName("createEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
 	}
 	
 	@Test
 	public void testCreateNewEventWithoutDescription() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
-	}
-	
-	@Test
-	public void testCreateNewEventWithoutAuthenticated() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
-	}
-	
-	
-	
-	@Test
-	public void testPostEvent() throws Exception {
-		//ArgumentCaptor<Event> arg = ArgumentCaptor.forClass(Event.class);
-		Event event1 = new Event();
-		eventService.save(event1);
-		when(eventService.findOne(0)).thenReturn(event1);
+	    when(eventService.save(event)).thenReturn(event);
+	    when(venueService.findAll()).thenReturn(Collections.<Venue> singletonList(venue));
+	    	
 		mvc.perform(MockMvcRequestBuilders.post("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-				.param("id", "0").param("name", "test").param("date", "2020-01-01").param("venue.name", "venue1")
-				.accept(MediaType.TEXT_HTML).with(csrf()))
-				.andExpect(status().isFound()).andExpect(content().string(""))
-				.andExpect(view().name("redirect:/events")).andExpect(model().hasNoErrors())
-				.andExpect(handler().methodName("createEvent")).andExpect(flash().attributeExists("ok_message"));
-
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("name","")
+				.param("date","2020-08-01")
+				.param("time","20:54")
+				.param("venue.name", "Venue A")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(model().hasErrors())
+		.andExpect(view().name("events/new"))
+		.andExpect(status().isOk())
+		.andExpect(handler().methodName("createEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
 	}
 	
 	@Test
 	public void testUpdateEventWithCorrectDataWithAuthenticated() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+		Event event1 = new Event();
+		eventService.save(event1);
+		
+		when(eventService.findOne(0)).thenReturn(event1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/events/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("id", "0")
+				.param("name", "test")
+				.param("date", "2020-01-01")
+				.param("venue.name", "venue1")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(status().isFound())
+		.andExpect(content().string(""))
+		.andExpect(view().name("redirect:/events"))
+		.andExpect(model().hasNoErrors())
+		.andExpect(handler().methodName("updateEvent"))
+		.andExpect(flash().attributeExists("message"));
 	}
 	
 	@Test
 	public void testUpdateEventWithoutName() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+		Event event1 = new Event();
+		eventService.save(event1);
+		when(eventService.save(event)).thenReturn(event1);
+		when(eventService.findOne(0)).thenReturn(event1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/events/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("id", "0")
+				.param("date", "2020-01-01")
+				.param("venue.name", "venue1")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(view().name("events/update"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("updateEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
 	}
 	
 	@Test
 	public void testUpdateEventWithoutDate() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+		Event event1 = new Event();
+		eventService.save(event1);
+		when(eventService.save(event)).thenReturn(event1);
+		when(eventService.findOne(0)).thenReturn(event1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/events/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("name","Test")
+				.param("id", "0")
+				.param("venue.name", "venue1")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(view().name("events/update"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("updateEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
 	}
 	
 	@Test
 	public void testUpdateEventWithoutVenue() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+		Event event1 = new Event();
+		eventService.save(event1);
+		when(eventService.save(event)).thenReturn(event1);
+		when(eventService.findOne(0)).thenReturn(event1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/events/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("name", "Test")
+				.param("id", "0")
+				.param("date", "2020-01-01")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(view().name("events/update"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("updateEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
 	}
 	
 	
 	@Test
 	public void testUpdateEventWithNameTooLong() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+		Event event1 = new Event();
+		eventService.save(event1);
+		when(eventService.save(event)).thenReturn(event1);
+		when(eventService.findOne(0)).thenReturn(event1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/events/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("name", testMaxChar)
+				.param("id", "0")
+				.param("date", "2020-01-01")
+				.param("venue.name", "venue1")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(view().name("events/update"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("updateEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
 	}
 	
 	@Test
 	public void testUpdateEventWithDateBeforePresentDay() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+		Event event1 = new Event();
+		eventService.save(event1);
+		when(eventService.save(event)).thenReturn(event1);
+		when(eventService.findOne(0)).thenReturn(event1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/events/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("name", "Test")
+				.param("id", "0")
+				.param("date", "0000-01-01")
+				.param("venue.name", "venue1")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(view().name("events/update"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("updateEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
+	}
+	
+	@Test
+	public void testUpdateEventWithDateOnPresentDay() throws Exception {
+		Event event1 = new Event();
+		eventService.save(event1);
+		when(eventService.save(event)).thenReturn(event1);
+		when(eventService.findOne(0)).thenReturn(event1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/events/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("name", "Test")
+				.param("id", "0")
+				.param("date", presentDay)
+				.param("venue.name", "venue1")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(view().name("events/update"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("updateEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
 	}
 	
 	@Test
 	public void testUpdateEventWithDescriptionTooLong() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+		Event event1 = new Event();
+		eventService.save(event1);
+		when(eventService.save(event)).thenReturn(event1);
+		when(eventService.findOne(0)).thenReturn(event1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/events/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("name", "Test")
+				.param("id", "0")
+				.param("date", "2020-01-01")
+				.param("description", testMaxChar)
+				.param("venue.name", "venue1")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(status().isOk())
+		.andExpect(view().name("events/update"))
+		.andExpect(model().hasErrors())
+		.andExpect(handler().methodName("updateEvent"));
+		
+		verify(venueService, times(1)).findAll();
+		
+		verifyZeroInteractions(venue);
+		verifyZeroInteractions(event);
 	}
 	
 	@Test
 	public void testUpdateEventWithoutTime() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+		Event event1 = new Event();
+		eventService.save(event1);
+		when(eventService.save(event)).thenReturn(event1);
+		when(eventService.findOne(0)).thenReturn(event1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/events/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("name", "Test")
+				.param("id", "0")
+				.param("date", "2020-01-01")
+				.param("venue.name", "venue1")
+				.param("description", "Test")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(status().isFound())
+		.andExpect(content().string(""))
+		.andExpect(view().name("redirect:/events"))
+		.andExpect(model().hasNoErrors())
+		.andExpect(handler().methodName("updateEvent"))
+		.andExpect(flash().attributeExists("message"));
+		
+		verifyZeroInteractions(venueService);
 	}
 	
 	@Test
 	public void testUpdateEventWithoutDescription() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
-	}
-	
-	@Test
-	public void testUpdateEventWithoutAuthenticated() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/events/new").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.accept(MediaType.TEXT_HTML))
-		.andExpect(status().isOk()).andExpect(view().name("events/new"))
-		.andExpect(handler().methodName("newEvent"));
+		Event event1 = new Event();
+		eventService.save(event1);
+		when(eventService.save(event)).thenReturn(event1);
+		when(eventService.findOne(0)).thenReturn(event1);
+		
+		mvc.perform(MockMvcRequestBuilders.put("/events/0").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.param("name", "Test")
+				.param("id", "0")
+				.param("date", "2020-01-01")
+				.param("venue.name", "venue1")
+				.accept(MediaType.TEXT_HTML)
+				.with(csrf()))
+		.andExpect(status().isFound())
+		.andExpect(content().string(""))
+		.andExpect(view().name("redirect:/events"))
+		.andExpect(model().hasNoErrors())
+		.andExpect(handler().methodName("updateEvent"))
+		.andExpect(flash().attributeExists("message"));
+		
+		verifyZeroInteractions(venueService);
 	}
 
 	@Test
-	public void testUpdateEvent() throws Exception {
-		Event event1 = new Event();
-		eventService.save(event1);
-		when(eventService.findOne(0)).thenReturn(event1);
-		mvc.perform(MockMvcRequestBuilders.put("/events/0").with(user("Rob").roles(Security.ADMIN_ROLE))
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-				.param("id", "0").param("name", "test").param("date", "2020-01-01").param("venue.name", "venue1")
-				.accept(MediaType.TEXT_HTML).with(csrf()))
-		.andExpect(status().isFound()).andExpect(content().string(""))
-		.andExpect(view().name("redirect:/events")).andExpect(model().hasNoErrors())
-		.andExpect(handler().methodName("updateEvent")).andExpect(flash().attributeExists("ok_message"));
+	public void testUpdateEventPage() throws Exception {
+
+		mvc.perform(get("/events/update").with(user("Rob").roles(Security.ADMIN_ROLE))
+				.accept(MediaType.TEXT_HTML))
+		.andExpect(status().isBadRequest());
 
 	}
 	
@@ -341,8 +695,13 @@ public class EventsControllerTest {
 		Event event1 = new Event();
 		eventService.save(event1);
 		when(eventService.findOne(0)).thenReturn(event1);
-		mvc.perform(MockMvcRequestBuilders.get("/events/delete/0").accept(MediaType.TEXT_HTML)).andExpect(status().isFound())
-		.andExpect(view().name("redirect:/events")).andExpect(handler().methodName("deleteEvent"));
+		
+		mvc.perform(MockMvcRequestBuilders.get("/events/delete/0").accept(MediaType.TEXT_HTML))
+		.andExpect(status().isFound())
+		.andExpect(view().name("redirect:/events"))
+		.andExpect(MockMvcResultMatchers.flash().attribute("message", "Event removed."))
+		.andExpect(handler().methodName("deleteEvent"));
+		
 		verify(eventService).delete(0);
 		verifyZeroInteractions(event);
 	}

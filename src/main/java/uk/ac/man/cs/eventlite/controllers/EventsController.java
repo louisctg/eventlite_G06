@@ -69,14 +69,14 @@ public class EventsController {
 		model.addAttribute("past_events", pastEvents);
 		}
 		
-		if (!twitter.isAuthorized()) {
-            return "redirect:/connect/twitter";
+		if (twitter != null && twitter.isAuthorized()) {
+			//Get latest five tweets from eventlite profile
+			List<Tweet> tweets = twitter.timelineOperations().getUserTimeline("EventLiteG06_19").subList(0, 5);
+			
+	        model.addAttribute("tweets", tweets);
         }
 		
-		//Get latest five tweets from eventlite profile
-		List<Tweet> tweets = twitter.timelineOperations().getUserTimeline("EventLiteG06_19").subList(0, 5);
-		
-        model.addAttribute("tweets", tweets);
+
 
 		return "events/index";
 	}
@@ -123,7 +123,7 @@ public class EventsController {
 		
 		event.setOrganiser(principal.getName());
 		eventService.save(event);
-		redirectAttrs.addFlashAttribute("ok_message", "New event added.");
+		redirectAttrs.addFlashAttribute("message", "New event added.");
 		
 		return "redirect:/events";
 	}
@@ -152,15 +152,17 @@ public class EventsController {
 		event.setId(id);
 		event.setOrganiser(principal.getName());
 		eventService.save(event);
-		redirAttrs.addFlashAttribute("ok_message", "Event updated.");
+		redirAttrs.addFlashAttribute("message", "Event updated.");
 				
 		return "redirect:/events";
 	}
 	
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-	public String deleteEvent(@PathVariable("id") long id)
+	public String deleteEvent(@PathVariable("id") long id ,RedirectAttributes redirectAttrs)
 	{
 		eventService.delete(id);
+		
+		redirectAttrs.addFlashAttribute("message", "Event removed.");
 		
 		return "redirect:/events";
 	}
