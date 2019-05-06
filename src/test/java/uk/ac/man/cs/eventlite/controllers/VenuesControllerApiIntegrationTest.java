@@ -23,6 +23,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.man.cs.eventlite.EventLite;
+import uk.ac.man.cs.eventlite.dao.VenueService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = EventLite.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -31,7 +32,9 @@ import uk.ac.man.cs.eventlite.EventLite;
 public class VenuesControllerApiIntegrationTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	private HttpEntity<String> httpEntity;
-
+	@Autowired
+	private VenueService venueService;
+	
 	@Autowired
 	private TestRestTemplate template;
 
@@ -48,5 +51,38 @@ public class VenuesControllerApiIntegrationTest extends AbstractTransactionalJUn
 		ResponseEntity<String> response = template.exchange("/api/venues", HttpMethod.GET, httpEntity, String.class);
 
 		assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+	}
+	@Test
+	public void testGetVenue() {
+		long idVenue;
+		if(venueService.findAll().iterator().hasNext())
+		{
+			idVenue = venueService.findAll().iterator().next().getId();
+			ResponseEntity<String> response = template.exchange("/api/venues/" + idVenue, HttpMethod.GET, httpEntity, String.class);
+		
+			assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+		}
+	}
+	@Test
+	public void testGetEvent() {
+		long idVenue;
+		if(venueService.findAll().iterator().hasNext())
+		{
+			idVenue = venueService.findAll().iterator().next().getId();
+			ResponseEntity<String> response = template.exchange("/api/venues/" + idVenue + "/events", HttpMethod.GET, httpEntity, String.class);
+		
+			assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+		}
+	}
+	@Test
+	public void testGetNext3Events() {
+		long idVenue;
+		if(venueService.findAll().iterator().hasNext())
+		{
+			idVenue = venueService.findAll().iterator().next().getId();
+			ResponseEntity<String> response = template.exchange("/api/venues/" + idVenue + "/next3events", HttpMethod.GET, httpEntity, String.class);
+		
+			assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+		}
 	}
 }
